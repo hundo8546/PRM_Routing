@@ -1,0 +1,134 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║           HIGH-LEVEL WORKFLOW: PRM-GUIDED AGENTIC ROUTING                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  USER QUERY
+  "Search annual reports, identify revenue changes 2022-2024,
+   check compliance, and generate a credit memo."
+        │
+        ▼
+ ┌─────────────────────────────────────────────────────────────────┐
+ │                    AGENTIC PIPELINE                             │
+ │                                                                 │
+ │   Step 1          Step 2          Step 3          Step 4        │
+ │  [Retrieve]  →  [Analyze]   →  [Compliance] →  [Synthesize]    │
+ │                                                                 │
+ │  ↑ tier set    ↑ tier set      ↑ tier set      ↑ tier set      │
+ │  by router     by router       by router       by router       │
+ └─────────────────────────────────────────────────────────────────┘
+        │               │               │               │
+        │    ◄──────────┴───────────────┘               │
+        │    Between every step, the routing loop runs: │
+        ▼                                               │
+ ╔═══════════════════════════════════════╗              │
+ ║        ROUTING LOOP  (per step)       ║◄─────────────┘
+ ╠═══════════════════════════════════════╣
+ ║                                       ║
+ ║  Completed step output                ║
+ ║           +                           ║
+ ║  Retrieved context (passages)         ║
+ ║           │                           ║
+ ║           ▼                           ║
+ ║   ┌───────────────┐                   ║
+ ║   │   VersaPRM    │  score ∈ [0, 1]   ║
+ ║   │   Scorer      │                   ║
+ ║   └───────┬───────┘                   ║
+ ║           │                           ║
+ ║     ┌─────▼──────┐                    ║
+ ║     │  Routing   │                    ║
+ ║     │ Controller │                    ║
+ ║     └─────┬──────┘                    ║
+ ║           │                           ║
+ ║     score > 0.86  ──────────────────► Tier 1  ($0.20/1M tok)
+ ║     score 0.62–0.86 ────────────────► Tier 2  ($0.90/1M tok)
+ ║     score < 0.62  ──────────────────► Tier 3  ($1.80/1M tok)
+ ║                                       ║
+ ╚═══════════════════════════════════════╝
+
+        │
+        ▼
+  FINAL ANSWER  (credit memo / compliance report / etc.)
+
+
+  COST COMPARISON (example 4-step trajectory, ~110 tok/step):
+
+  ┌─────────────────┬──────────┬──────────┬────────────┐
+  │ Approach        │  Step 1  │  Step 2  │  Steps 3-4 │  Total cost
+  ├─────────────────┼──────────┼──────────┼────────────┤
+  │ Always Frontier │   T3     │   T3     │   T3, T3   │  ████████  1.0×
+  │ Always Uniform  │   T2     │   T2     │   T2, T2   │  ████      0.5×
+  │ TRIM (binary)   │   T1     │   T3     │   T1, T3   │  █████     0.6×
+  │ PRM-Guided      │   T2     │   T1     │   T3, T2   │  ████      0.5×
+  └─────────────────┴──────────┴──────────┴────────────┘
+                                                 ↑
+                              Same cost as Uniform, but tiers
+                              adapt to actual step quality
+
+
+══════════════════════════════════════════════════════════════════════════════
+  SIDE-BY-SIDE: HOW EACH APPROACH HANDLES THE SAME 4-STEP TRAJECTORY
+══════════════════════════════════════════════════════════════════════════════
+
+  Trajectory: Retrieve → Analyze → Check → Synthesize
+  Step quality (human labels): Good, Good, BAD, Good
+
+
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ DAAO                                                             │
+  │ (pre-execution, difficulty heuristic)                            │
+  │                                                                  │
+  │  Query → [Difficulty: Medium] → T2 for ALL steps                 │
+  │                                                                  │
+  │  Retrieve[T2] → Analyze[T2] → Check[T2] → Synthesize[T2]        │
+  │   Good           Good          BAD ← T2 misses this failure      │
+  │                                                                  │
+  │  Problem: same tier regardless of what actually goes wrong       │
+  └──────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ BAAR                                                             │
+  │ (offline classifier, no runtime signal)                          │
+  │                                                                  │
+  │  Retrieve[T1] → Analyze[T2] → Check[T3] → Synthesize[T3]        │
+  │   Good           Good          BAD ✓        Good (over-escalated)│
+  │                                                                  │
+  │  Classifier saw step index=2 in training → always escalates here │
+  │  Problem: pattern-matches trajectory structure, not actual error  │
+  │           Escalation rate = 65%, cost > Frontier                 │
+  └──────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ TRIM                                                             │
+  │ (binary PRM: T1 or T3 only, math-specialist PRM)                 │
+  │                                                                  │
+  │  Retrieve[T1]  →  Analyze[T3]  →  Check[T1]  →  Synthesize[T3]  │
+  │  score=0.14 ✗     score=0.14 ✗    score=0.15 ✗   score=0.16 ✗   │
+  │  (Qwen PRM gives ~0.14 for ALL agent steps — inverted signal)    │
+  │                                                                  │
+  │  Problem: math PRM cannot score heterogeneous agent steps.       │
+  │           No middle tier — jumps between cheap and expensive.    │
+  └──────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ PROPOSED (PRM-Guided)                          ← our approach    │
+  │ (VersaPRM + retrieval context + 3-tier routing)                  │
+  │                                                                  │
+  │  Retrieve[T2]  →  Analyze[T1]  →  Check[T3]  →  Synthesize[T2]  │
+  │  score=0.81 ✓     score=0.88 ✓    score=0.41 ✓   score=0.79 ✓   │
+  │    │                 │               │               │           │
+  │   0.62<s<0.86      s>0.86          s<0.62         0.62<s<0.86   │
+  │   → T2 (safe)     → T1 (cheap)   → T3 (recover)  → T2 (safe)   │
+  │                                                                  │
+  │  ✓ Detects the BAD step and escalates only that step            │
+  │  ✓ Uses cheap T1 when prior step was genuinely good             │
+  │  ✓ Doesn't waste frontier on steps that don't need it           │
+  └──────────────────────────────────────────────────────────────────┘
+
+  LEGEND:
+    T1 = Llama-3.1-8B   ($0.20/1M)  — fast, cheap, limited recovery
+    T2 = Llama-3.1-70B  ($0.90/1M)  — balanced
+    T3 = Qwen2.5-72B    ($1.80/1M)  — frontier, best error recovery
+    score = VersaPRM(step + retrieval context)  ∈ [0, 1]
+    θ_h = 0.86 (p75 of VersaPRM score distribution)
+    θ_l = 0.62 (p25 of VersaPRM score distribution)
