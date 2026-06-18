@@ -1,0 +1,304 @@
+============================================================
+  EXPERIMENTS 8, 9, 10 — WORKFLOW DIAGRAMS
+============================================================
+
+
+──────────────────────────────────────────────────────────
+ EXPERIMENT 8: Temporal Disagreement Routing
+ "Score drops between steps as a quality deterioration signal"
+──────────────────────────────────────────────────────────
+
+  MOTIVATION (from Exp 3):
+  Oracle ceiling = only +9pp over random. Consecutive step
+  quality has low autocorrelation — but SHARP drops are still
+  informative even when gradual drift is not.
+
+  BASELINE (standard VersaPRM routing):
+
+    Step t-2    Step t-1    Step t     Step t+1
+       │            │          │           │
+    score_{t-2}  score_{t-1}  score_t   ← tier decided by score_{t-1} only
+                                          (ignores trajectory trend)
+
+
+  EXP 8 — TEMPORAL ROUTING:
+
+    Step t-2    Step t-1    Step t       Step t+1
+       │            │          │             │
+    score_{t-2}  score_{t-1}  score_t      tier?
+                     │
+                     ▼
+              ┌──────────────────┐
+              │  Temporal Signal │
+              │                  │
+              │  drop = score_{t-2} − score_{t-1}     │
+              │  (positive = quality fell)            │
+              └──────────────────┘
+                     │
+                     │  drop > τ_drop  (e.g. 0.91→0.42)
+                     ├─────────────────────────────────► Tier 3 (escalate)
+                     │                                   "quality crashed,
+                     │                                    recover now"
+                     │  drop ≤ τ_drop  (e.g. 0.92→0.89)
+                     └─────────────────────────────────► Standard 3-tier
+                                                          routing on score_{t-1}
+
+  CONCRETE EXAMPLE:
+
+    t=1: score=0.87  ──► T1 (high, cheap)       0.87
+    t=2: score=0.85  ──► T1 (stable, cheap)     0.85
+    t=3: score=0.42  ──► ???                     0.42
+         drop = 0.85 − 0.42 = 0.43 > τ_drop=0.15
+         ──────────────────────────────────────► T3 (escalate immediately)
+
+    Without temporal signal: score_{t-2}=0.42 → T3 anyway (by θ_l=0.62)
+    WITH temporal signal: catches the crash ONE STEP EARLIER
+
+  RESULT:
+    τ_drop=0.10 → acc=0.360 (+0.013 vs VersaPRM baseline)
+    τ_drop=0.05 → acc=0.374 (+0.027 vs VersaPRM baseline, best)
+    Marginal but consistent signal. Novel direction.
+
+
+──────────────────────────────────────────────────────────
+ EXPERIMENT 9: User Query Compression
+ "Compress the query fed to VersaPRM, not the step output"
+──────────────────────────────────────────────────────────
+
+  WHY THIS DIFFERS FROM EXP 5 (failed):
+
+    Exp 5 compressed:  STEP OUTPUT  → JSON tool calls → uncompressible
+    Exp 9 compresses:  USER QUERY   → natural language  → compressible
+
+
+  BASELINE pipeline:
+
+    ┌─────────────────────────────────────┐
+    │  User Query (natural language)      │  ← 121 tokens avg
+    │  "Please search the annual reports  │
+    │   and identify revenue changes..."  │
+    └──────────────────┬──────────────────┘
+                       │
+            ┌──────────▼──────────┐
+            │    Agent Execution  │
+            └──────────┬──────────┘
+                       │
+            ┌──────────▼──────────┐
+            │ VersaPRM Scorer     │  input: query (121 tok) + step (97 tok)
+            │ score s_t ∈ [0,1]  │  total: ~218 tokens per scoring call
+            └──────────┬──────────┘
+                       │
+                  Router → Tier
+
+
+  EXP 9 pipeline:
+
+    ┌─────────────────────────────────────┐
+    │  User Query (natural language)      │  ← 121 tokens
+    └──────────────────┬──────────────────┘
+                       │
+            ┌──────────▼──────────┐
+            │  Caveman Compress   │
+            │                     │
+            │  Remove: a, an, the,│  "Please search annual reports
+            │  is, are, for, of,  │   identify revenue changes..."
+            │  will, by, with...  │
+            └──────────┬──────────┘
+                       │  93 tokens (−22.5%)
+            ┌──────────▼──────────┐
+            │    Agent Execution  │  ← agent sees compressed query
+            └──────────┬──────────┘
+                       │
+            ┌──────────▼──────────┐
+            │ VersaPRM Scorer     │  input: q_comp (93 tok) + step (97 tok)
+            │ score s_t ∈ [0,1]  │  total: ~190 tokens (−13% vs baseline)
+            └──────────┬──────────┘
+                       │
+                  Router → Tier
+
+  COMPRESSION EXAMPLE:
+
+    Original (116 chars):
+    "When did the English local newspaper, featuring the sculpture
+     and war memorial in the Forbury gardens, change names?"
+
+    Compressed (92 chars):
+    "When English local newspaper featuring sculpture war memorial
+     Forbury gardens change names ."
+
+    Tokens: 29 → 23  (reduction = 20.7%)
+
+  RESULT:
+    Query compression ratio: 22.5% (target was ≥25%, just missed)
+    Spearman:   +0.289 → +0.082  (−0.207, signal degrades)
+    Routing precision: 0.434 → 0.550  (+0.116, IMPROVES — paradox!)
+    Routing accuracy:  0.347 → 0.390  (+0.044)
+
+  THE PARADOX — why does precision improve despite lower Spearman?
+
+    Spearman    = global rank order quality across ALL steps
+    Rout. prec. = are the T3-escalated steps actually bad?
+
+    Compressed query shifts VersaPRM scores so bad steps fall
+    more consistently below θ_l = 0.62 (threshold alignment).
+    Global ranking is noisier, but escalation boundary is sharper.
+
+    ┌──────────────────────────────────────────────────┐
+    │  Original scores:  0.72  0.68  0.41  0.75  0.63  │
+    │  Threshold θ_l:                  ────────────────0.62
+    │  T3 gets:          ────      ──────────────────── only 0.41
+    │
+    │  Compressed scores: 0.78  0.63  0.39  0.82  0.51  │
+    │  Threshold θ_l:                        ────────────0.62
+    │  T3 gets:                 ──────  ──────────────── 0.39, 0.51
+    │  Bad steps now more consistently below threshold  │
+    └──────────────────────────────────────────────────┘
+
+
+──────────────────────────────────────────────────────────
+ EXPERIMENT 10: Retrieval Context Compression
+ "Add (then compress) retrieved passages to VersaPRM input"
+──────────────────────────────────────────────────────────
+
+  KEY INSIGHT:
+  VersaPRM in Exps 1–4 scores steps using only query + step text.
+  It CANNOT assess retrieval quality without seeing what was retrieved.
+
+  RETRIEVAL STEP SCORING PROBLEM:
+
+    Query: "Find revenue changes in annual reports 2022-2024"
+    Step:  search(query="annual report revenue 2022 2024")
+                    │
+                    ▼ (tool executes)
+    Tool result:  "...Acme Corp reported $4.2B revenue in 2022,
+                   declining to $3.8B in 2023 due to..."  (506 tok avg)
+                    │
+                    ??? Is this a GOOD retrieval step?
+
+  Without context: VersaPRM sees only the search query — cannot
+                   tell if the result was relevant.
+  With context:    VersaPRM sees query + retrieved text + step
+                   — can assess relevance and completeness.
+
+
+  FOUR CONDITIONS TESTED:
+
+  A. BASELINE  (current Exps 1–4)
+  ─────────────────────────────────────────────────────
+    Query (121 tok)
+        +
+    Step text (97 tok)
+    ─────────────────
+    Total: ~218 tok/call     VersaPRM score → Router
+
+
+  B. EXP 9  (compressed query, no retrieval)
+  ─────────────────────────────────────────────────────
+    Query_comp (93 tok)
+        +
+    Step text (97 tok)
+    ─────────────────
+    Total: ~190 tok/call     VersaPRM score → Router
+    Δ accuracy: +0.044
+
+
+  C. EXP 10a  (full retrieval context added)
+  ─────────────────────────────────────────────────────
+    Query (121 tok)
+        +
+    Retrieved passages (262 tok avg, up to 2000 tok)
+    │  "Forbury Gardens paved the way for..."
+    │  "The Maiwand Lion was unveiled in..."
+        +
+    Step text (97 tok)
+    ─────────────────
+    Total: ~480 tok/call     VersaPRM score → Router
+    Δ accuracy: +0.066  ◄── LARGEST improvement in study
+
+
+  D. EXP 10b  (compressed retrieval context)
+  ─────────────────────────────────────────────────────
+    Query (121 tok)
+        +
+    ┌──────────────────────────────────┐
+    │  Caveman Compress retrieval text │
+    │                                  │
+    │  Remove: a, an, the, is, of, for │
+    │  Keep:   nouns, verbs, numbers,  │
+    │          proper nouns, entities  │
+    └──────────────────────────────────┘
+    Retrieved_comp (232 tok, −14.8% vs full)
+        +
+    Step text (97 tok)
+    ─────────────────
+    Total: ~450 tok/call     VersaPRM score → Router
+    Δ accuracy: +0.055  (retains 83% of the Exp10a gain)
+
+
+  RETRIEVAL COMPRESSION EXAMPLE:
+
+    Original passage (1803 chars → 262 tokens):
+    '"Forbury Gardens"
+     paved the way for the incorporation, in 1873, of the western
+     part of the Forbury into the gardens, which became known as
+     Forbury Gardens. The Maiwand Lion was unveiled in 1886...'
+
+    Compressed (1360 chars → 232 tokens, −14.8%):
+    'Forbury Gardens paved way incorporation 1873 western part Forbury
+     gardens became known Forbury Gardens. Maiwand Lion unveiled 1886...'
+
+    Preserved: dates (1873, 1886), proper nouns (Forbury Gardens,
+               Maiwand Lion), key verbs (paved, unveiled)
+    Removed:   articles (the, a), prepositions (of, for, into),
+               auxiliary words (the way for, which became known as)
+
+
+  ACCURACY COMPARISON:
+
+    ┌──────────────────────────────────────────────────────────┐
+    │  A. Baseline          ████████████████░░░░  0.347        │
+    │  B. Query compressed  ████████████████████  0.390 (+4.4%)│
+    │  C. Full retrieval    ████████████████████████ 0.413 (+6.6%)│
+    │  D. Comp retrieval    ███████████████████████ 0.402 (+5.5%)│
+    └──────────────────────────────────────────────────────────┘
+         ▲
+         Baseline (0.347)
+
+  RECOMMENDATION:
+  Use Exp 10b (compressed retrieval) in production:
+    • +5.5pp routing accuracy vs Exp 1–4 baseline
+    • 14.8% fewer context tokens vs full retrieval
+    • Preserves semantic content (dates, entities, key facts)
+
+
+══════════════════════════════════════════════════════════
+  UNIFIED TIMELINE: HOW EXPS 8–10 RELATE
+══════════════════════════════════════════════════════════
+
+  All three address the same core limitation found in Exp 3:
+  "VersaPRM signal quality (Spearman=0.166) limits routing gains"
+
+  Three orthogonal directions to improve signal:
+
+             STRONGER SIGNAL
+                   │
+    ┌──────────────┼──────────────┐
+    │              │              │
+    ▼              ▼              ▼
+  Exp 8         Exp 9          Exp 10
+ (temporal)    (query)      (retrieval)
+    │              │              │
+ Use score      Compress      Add retrieved
+ HISTORY to    query to       passages to
+ detect        sharpen        give VersaPRM
+ trajectory    escalation     full context
+ deterioration boundary       for retrieval
+    │              │          step scoring
+    │              │              │
+ +0.013 acc    +0.044 acc    +0.066 acc
+ (marginal)    (paradox)     (largest gain)
+    │              │              │
+    └──────────────┴──────────────┘
+                   │
+              Combined: +0.038 acc
+              (Exp 7+8, verified)

@@ -1,0 +1,135 @@
+============================================================
+  ROUTING APPROACH COMPARISON: PRIOR WORK VS PROPOSED
+============================================================
+
+
+──────────────────────────────────────────────────────────
+ DAAO  (Difficulty-Aware Agentic Orchestration, 2025)
+ "Route once, pre-execution, based on query difficulty"
+──────────────────────────────────────────────────────────
+
+  User Query
+      │
+      ▼
+ ┌─────────────────────┐
+ │  Difficulty Scorer  │   ← heuristic (question length,
+ │  (pre-execution)    │     complexity keywords)
+ └─────────────────────┘
+      │
+      ├── Easy  ──────────────────────────► Tier 1 (cheap)
+      │                                     ALL steps
+      ├── Medium ─────────────────────────► Tier 2 (medium)
+      │                                     ALL steps
+      └── Hard ──────────────────────────► Tier 3 (frontier)
+                                           ALL steps
+
+  Step 1 ──► Step 2 ──► Step 3 ──► Step 4  (same tier throughout)
+
+  LIMITATION: One tier for every step, regardless of what
+  actually goes wrong mid-trajectory.
+  Our result: degenerates to Always-Cheap on AgentProcessBench.
+
+
+──────────────────────────────────────────────────────────
+ BAAR  (Budget-Aware Agentic Routing, 2026)
+ "Learn step boundaries from trajectory data offline"
+──────────────────────────────────────────────────────────
+
+  [Offline training on annotated trajectories]
+      │
+      ▼
+ ┌───────────────────────────────┐
+ │  Boundary Classifier          │   ← logistic regression on
+ │  (step features only)         │     step index, type, position
+ └───────────────────────────────┘
+      │
+      ▼
+  At each step during inference:
+
+  Step t  ──► [Classifier]  ──► Tier selection
+                                 │
+                  ┌──────────────┼──────────────┐
+                  ▼              ▼              ▼
+              Tier 1          Tier 2          Tier 3
+             (cheap)         (medium)       (frontier)
+
+  NO RUNTIME SIGNAL: the classifier sees only structural
+  features (position, type) — not what actually happened
+  at step t.
+
+  LIMITATION: Cannot adapt to failure patterns in the
+  current run that differ from training distribution.
+  Our result: 65% escalation rate, cost > Always-Frontier.
+
+
+──────────────────────────────────────────────────────────
+ TRIM  (Targeted Stepwise Routing, 2026)
+ "Use PRM score to route between cheap and frontier"
+──────────────────────────────────────────────────────────
+
+  At each step during inference:
+
+  Step t completes
+      │
+      ▼
+ ┌──────────────┐
+ │  Math PRM    │   ← Qwen2.5-Math-PRM
+ │  (score s_t) │     trained on math CoT only
+ └──────────────┘
+      │
+      ├── s_t > θ ───────────────────────► Tier 1 (cheap)
+      │                                    for step t+1
+      └── s_t ≤ θ ───────────────────────► Tier 3 (frontier)
+                                           for step t+1
+
+  LIMITATION 1: Binary — no intermediate tier.
+  LIMITATION 2: Math PRM only — inverted signal on agent steps
+                (sep = −0.036 on AgentProcessBench).
+  LIMITATION 3: Homogeneous setting (all steps are math CoT).
+
+  Cost–accuracy gap: large jump between θ = 0.70 and 0.72
+  (cost 241k → 362k, only +3pp accuracy).
+
+
+──────────────────────────────────────────────────────────
+ PROPOSED  (PRM-Guided 3-Tier Routing)
+ "Multi-domain PRM signal → three-tier routing"
+──────────────────────────────────────────────────────────
+
+  At each step during inference:
+
+  Step t completes  +  Retrieved context
+      │                      │
+      └──────────┬────────────┘
+                 ▼
+         ┌───────────────┐
+         │   VersaPRM    │   ← multi-domain PRM
+         │   scorer      │     trained on MMLU-Pro CoT
+         │ score s_t∈[0,1]│    Spearman = +0.166 on agent steps
+         └───────────────┘
+                 │
+                 │  s_t > θ_h (0.86)
+                 ├──────────────────────────► Tier 1  (Llama-3.1-8B)
+                 │                             step t+1: cheap, fast
+                 │  θ_l < s_t ≤ θ_h
+                 ├──────────────────────────► Tier 2  (Llama-3.1-70B)
+                 │                             step t+1: balanced
+                 │  s_t ≤ θ_l (0.62)
+                 └──────────────────────────► Tier 3  (Qwen2.5-72B)
+                                              step t+1: frontier, recover
+
+  KEY DIFFERENCES FROM PRIOR WORK:
+  ┌─────────────────────┬────────┬────────┬────────┬────────────┐
+  │ Feature             │  DAAO  │  BAAR  │  TRIM  │  Proposed  │
+  ├─────────────────────┼────────┼────────┼────────┼────────────┤
+  │ Step-level routing  │   ✗    │   ✓    │   ✓    │     ✓      │
+  │ Runtime PRM signal  │   ✗    │   ✗    │   ✓    │     ✓      │
+  │ Multi-domain PRM    │   ✗    │   ✗    │   ✗    │     ✓      │
+  │ Heterogeneous steps │   ✓    │   ✓    │   ✗    │     ✓      │
+  │ Three tiers         │   ✓    │   ✓    │   ✗    │     ✓      │
+  │ Retrieval context   │   ✗    │   ✗    │   ✗    │     ✓      │
+  │ No training needed  │   ✓    │   ✗    │   ✓    │     ✓      │
+  └─────────────────────┴────────┴────────┴────────┴────────────┘
+
+  PARETO RESULT: Proposed dominates TRIM at every operating
+  point (+10pp accuracy at equal cost; −26% cost at equal acc).
