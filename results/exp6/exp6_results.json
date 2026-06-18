@@ -1,0 +1,49 @@
+{
+  "fixed": {
+    "Dis(VQ) \u03c4=0.40": {
+      "policy": "Dis(VQ) \u03c4=0.40",
+      "accuracy": 0.5726,
+      "accuracy_std": 0.281,
+      "cost_usd_total": 21.793019,
+      "cost_usd_per_traj": 0.108965,
+      "cost_norm_per_traj": 544825.47,
+      "escalation_rate": 0.7461,
+      "avg_tier": 2.734,
+      "routing_stability": 0.7579
+    },
+    "Dis(VQ) \u03c4=0.55": {
+      "policy": "Dis(VQ) \u03c4=0.55",
+      "accuracy": 0.5253,
+      "accuracy_std": 0.3028,
+      "cost_usd_total": 18.84946,
+      "cost_usd_per_traj": 0.094247,
+      "cost_norm_per_traj": 471236.5,
+      "escalation_rate": 0.5323,
+      "avg_tier": 2.487,
+      "routing_stability": 0.5978
+    },
+    "Dis(VQ) \u03c4=0.65": {
+      "policy": "Dis(VQ) \u03c4=0.65",
+      "accuracy": 0.4745,
+      "accuracy_std": 0.3108,
+      "cost_usd_total": 16.472145,
+      "cost_usd_per_traj": 0.082361,
+      "cost_norm_per_traj": 411803.61,
+      "escalation_rate": 0.3717,
+      "avg_tier": 2.282,
+      "routing_stability": 0.5832
+    }
+  },
+  "versa_baseline": {
+    "policy": "PRM-Guided (h=0.86/l=0.62)",
+    "accuracy": 0.3468,
+    "accuracy_std": 0.3035,
+    "cost_usd_total": 12.926533,
+    "cost_usd_per_traj": 0.064633,
+    "cost_norm_per_traj": 323163.31,
+    "escalation_rate": 0.1475,
+    "avg_tier": 1.939,
+    "routing_stability": 0.5466
+  },
+  "note": "Qwen scores near-constant ~0.14; disagreement = versa_score - 0.14. Not a useful uncertainty signal."
+}

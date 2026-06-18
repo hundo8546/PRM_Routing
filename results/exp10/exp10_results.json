@@ -1,0 +1,23 @@
+{
+  "compression_stats": {
+    "query_orig_tokens": 120.77528675703859,
+    "query_comp_tokens": 93.38425443169969,
+    "query_compression_ratio": 0.22452272343400762,
+    "retrieval_orig_tokens": 262.3528846153846,
+    "retrieval_comp_tokens": 232.43365384615385,
+    "retrieval_compression_ratio": 0.1483450418893156,
+    "n_steps_with_retrieval": 1040
+  },
+  "signal_quality": {
+    "baseline_spearman": 0.2892,
+    "baseline_prec": 0.4341,
+    "query_comp_spearman": 0.0818,
+    "query_comp_prec": 0.55,
+    "retr_full_spearman": 0.3068,
+    "retr_comp_spearman": 0.2669,
+    "retr_comp_prec": 0.4118
+  },
+  "exp9_criterion_met": false,
+  "exp10_criterion_met": false,
+  "n_scored": 400
+}

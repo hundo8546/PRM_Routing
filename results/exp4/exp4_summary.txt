@@ -1,0 +1,11 @@
+Experiment 4: Domain Generalization
+Source: ['hotpotqa', 'gaia_dev', 'bfcl'] | Target: tau2
+
+Policy                          In-dist  Transfer   Degrad  EscRate    CostN
+---------------------------------------------------------------------------
+Always-Cheap (T1)                0.2324    0.1703  +0.0621    0.000    76103
+Uniform (T2)                     0.4464    0.3730  +0.0733    0.000   342465
+Always-Frontier (T3)             0.6826    0.5996  +0.0830    1.000   684931
+TRIM (θ=0.75)                    0.3290    0.3240  +0.0050    0.505   454233
+BAAR                             0.3877    0.3555  +0.0322    0.690   549908
+PRM-Guided (h=0.86/l=0.62)       0.4014    0.3609  +0.0405    0.246   380299

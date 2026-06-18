@@ -1,0 +1,194 @@
+{
+  "fixed": {
+    "Temporal \u03c4_drop=0.10": {
+      "policy": "Temporal \u03c4_drop=0.10",
+      "accuracy": 0.3596,
+      "accuracy_std": 0.3045,
+      "cost_usd_total": 14.53786,
+      "cost_usd_per_traj": 0.072689,
+      "cost_norm_per_traj": 363446.51,
+      "escalation_rate": 0.2596,
+      "avg_tier": 2.053,
+      "routing_stability": 0.447
+    },
+    "Temporal \u03c4_drop=0.15": {
+      "policy": "Temporal \u03c4_drop=0.15",
+      "accuracy": 0.3523,
+      "accuracy_std": 0.3032,
+      "cost_usd_total": 13.749042,
+      "cost_usd_per_traj": 0.068745,
+      "cost_norm_per_traj": 343726.04,
+      "escalation_rate": 0.2132,
+      "avg_tier": 2.005,
+      "routing_stability": 0.4959
+    },
+    "Temporal \u03c4_drop=0.25": {
+      "policy": "Temporal \u03c4_drop=0.25",
+      "accuracy": 0.3472,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 13.006187,
+      "cost_usd_per_traj": 0.065031,
+      "cost_norm_per_traj": 325154.67,
+      "escalation_rate": 0.1528,
+      "avg_tier": 1.944,
+      "routing_stability": 0.5454
+    }
+  },
+  "pareto": [
+    {
+      "policy": "Temporal \u03c4_drop=0.05",
+      "accuracy": 0.3737,
+      "accuracy_std": 0.3073,
+      "cost_usd_total": 15.83161,
+      "cost_usd_per_traj": 0.079158,
+      "cost_norm_per_traj": 395790.26,
+      "escalation_rate": 0.3452,
+      "avg_tier": 2.162,
+      "routing_stability": 0.3714,
+      "routing_precision": 0.4532
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.08",
+      "accuracy": 0.3653,
+      "accuracy_std": 0.3067,
+      "cost_usd_total": 15.184197,
+      "cost_usd_per_traj": 0.075921,
+      "cost_norm_per_traj": 379604.92,
+      "escalation_rate": 0.2982,
+      "avg_tier": 2.111,
+      "routing_stability": 0.4162,
+      "routing_precision": 0.4563
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.11",
+      "accuracy": 0.3555,
+      "accuracy_std": 0.3037,
+      "cost_usd_total": 14.092504,
+      "cost_usd_per_traj": 0.070463,
+      "cost_norm_per_traj": 352312.6,
+      "escalation_rate": 0.2383,
+      "avg_tier": 2.03,
+      "routing_stability": 0.4686,
+      "routing_precision": 0.477
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.15",
+      "accuracy": 0.3524,
+      "accuracy_std": 0.3033,
+      "cost_usd_total": 13.771671,
+      "cost_usd_per_traj": 0.068858,
+      "cost_norm_per_traj": 344291.78,
+      "escalation_rate": 0.2148,
+      "avg_tier": 2.006,
+      "routing_stability": 0.4948,
+      "routing_precision": 0.4806
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.18",
+      "accuracy": 0.351,
+      "accuracy_std": 0.3033,
+      "cost_usd_total": 13.620493,
+      "cost_usd_per_traj": 0.068102,
+      "cost_norm_per_traj": 340512.32,
+      "escalation_rate": 0.2023,
+      "avg_tier": 1.994,
+      "routing_stability": 0.5052,
+      "routing_precision": 0.4923
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.21",
+      "accuracy": 0.3482,
+      "accuracy_std": 0.3037,
+      "cost_usd_total": 13.199012,
+      "cost_usd_per_traj": 0.065995,
+      "cost_norm_per_traj": 329975.3,
+      "escalation_rate": 0.1679,
+      "avg_tier": 1.959,
+      "routing_stability": 0.5373,
+      "routing_precision": 0.5155
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.24",
+      "accuracy": 0.3472,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 13.034981,
+      "cost_usd_per_traj": 0.065175,
+      "cost_norm_per_traj": 325874.52,
+      "escalation_rate": 0.1548,
+      "avg_tier": 1.946,
+      "routing_stability": 0.5448,
+      "routing_precision": 0.532
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.27",
+      "accuracy": 0.3469,
+      "accuracy_std": 0.3036,
+      "cost_usd_total": 12.96129,
+      "cost_usd_per_traj": 0.064806,
+      "cost_norm_per_traj": 324032.24,
+      "escalation_rate": 0.1502,
+      "avg_tier": 1.942,
+      "routing_stability": 0.5454,
+      "routing_precision": 0.5312
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.30",
+      "accuracy": 0.3468,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 12.93382,
+      "cost_usd_per_traj": 0.064669,
+      "cost_norm_per_traj": 323345.49,
+      "escalation_rate": 0.1481,
+      "avg_tier": 1.94,
+      "routing_stability": 0.5466,
+      "routing_precision": 0.5387
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.34",
+      "accuracy": 0.3468,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 12.926533,
+      "cost_usd_per_traj": 0.064633,
+      "cost_norm_per_traj": 323163.31,
+      "escalation_rate": 0.1475,
+      "avg_tier": 1.939,
+      "routing_stability": 0.5466,
+      "routing_precision": 0.5406
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.37",
+      "accuracy": 0.3468,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 12.926533,
+      "cost_usd_per_traj": 0.064633,
+      "cost_norm_per_traj": 323163.31,
+      "escalation_rate": 0.1475,
+      "avg_tier": 1.939,
+      "routing_stability": 0.5466,
+      "routing_precision": 0.5406
+    },
+    {
+      "policy": "Temporal \u03c4_drop=0.40",
+      "accuracy": 0.3468,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 12.926533,
+      "cost_usd_per_traj": 0.064633,
+      "cost_norm_per_traj": 323163.31,
+      "escalation_rate": 0.1475,
+      "avg_tier": 1.939,
+      "routing_stability": 0.5466,
+      "routing_precision": 0.5406
+    }
+  ],
+  "versa_baseline": {
+    "policy": "PRM-Guided (h=0.86/l=0.62)",
+    "accuracy": 0.3468,
+    "accuracy_std": 0.3035,
+    "cost_usd_total": 12.926533,
+    "cost_usd_per_traj": 0.064633,
+    "cost_norm_per_traj": 323163.31,
+    "escalation_rate": 0.1475,
+    "avg_tier": 1.939,
+    "routing_stability": 0.5466
+  }
+}

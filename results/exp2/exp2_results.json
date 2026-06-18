@@ -1,0 +1,86 @@
+{
+  "config": {
+    "prm_signal": "versa",
+    "train_per_dataset": 200,
+    "test_per_dataset": 50
+  },
+  "results": [
+    {
+      "policy": "Always-Cheap (T1)",
+      "accuracy": 0.1937,
+      "accuracy_std": 0.2753,
+      "cost_usd_total": 2.811239,
+      "cost_usd_per_traj": 0.014056,
+      "cost_norm_per_traj": 70280.99,
+      "escalation_rate": 0.0,
+      "avg_tier": 1.0,
+      "routing_stability": 1.0
+    },
+    {
+      "policy": "Uniform (T2)",
+      "accuracy": 0.3881,
+      "accuracy_std": 0.3098,
+      "cost_usd_total": 12.650577,
+      "cost_usd_per_traj": 0.063253,
+      "cost_norm_per_traj": 316264.43,
+      "escalation_rate": 0.0,
+      "avg_tier": 2.0,
+      "routing_stability": 1.0
+    },
+    {
+      "policy": "Always-Frontier (T3)",
+      "accuracy": 0.6168,
+      "accuracy_std": 0.28,
+      "cost_usd_total": 25.301155,
+      "cost_usd_per_traj": 0.126506,
+      "cost_norm_per_traj": 632528.86,
+      "escalation_rate": 1.0,
+      "avg_tier": 3.0,
+      "routing_stability": 1.0
+    },
+    {
+      "policy": "DAAO",
+      "accuracy": 0.1937,
+      "accuracy_std": 0.2753,
+      "cost_usd_total": 2.811239,
+      "cost_usd_per_traj": 0.014056,
+      "cost_norm_per_traj": 70280.99,
+      "escalation_rate": 0.0,
+      "avg_tier": 1.0,
+      "routing_stability": 1.0
+    },
+    {
+      "policy": "BAAR",
+      "accuracy": 0.3382,
+      "accuracy_std": 0.3234,
+      "cost_usd_total": 19.678521,
+      "cost_usd_per_traj": 0.098393,
+      "cost_norm_per_traj": 491963.03,
+      "escalation_rate": 0.6502,
+      "avg_tier": 2.3,
+      "routing_stability": 0.8079
+    },
+    {
+      "policy": "TRIM (\u03b8=0.75)",
+      "accuracy": 0.2977,
+      "accuracy_std": 0.3079,
+      "cost_usd_total": 15.500403,
+      "cost_usd_per_traj": 0.077502,
+      "cost_norm_per_traj": 387510.09,
+      "escalation_rate": 0.4687,
+      "avg_tier": 2.042,
+      "routing_stability": 0.5576
+    },
+    {
+      "policy": "PRM-Guided (h=0.86/l=0.62)",
+      "accuracy": 0.3468,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 12.926533,
+      "cost_usd_per_traj": 0.064633,
+      "cost_norm_per_traj": 323163.31,
+      "escalation_rate": 0.1475,
+      "avg_tier": 1.939,
+      "routing_stability": 0.5466
+    }
+  ]
+}

@@ -1,1 +1,27 @@
+# Large model weights — never commit
+models/
 
+# Cloned benchmark repos (tracked separately or via submodule)
+benchmarks/ToolPRMBench/
+benchmarks/AgentProcessBench/
+benchmarks/tau2-bench/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.ipynb_checkpoints/
+
+# Jupyter
+*.ipynb
+
+# OS
+.DS_Store
+*.swp
+*.swo
+
+# Build artifacts
+*.aux *.log *.out *.synctex.gz *.fls *.fdb_latexmk
+paper/*.pdf
+paper/*.aux
+paper/*.log

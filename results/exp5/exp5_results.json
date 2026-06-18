@@ -1,0 +1,20 @@
+{
+  "compression": {
+    "mean_original_tokens": 96.9,
+    "mean_compressed_tokens": 91.0,
+    "mean_compression_ratio": 0.014
+  },
+  "signal_preservation": {
+    "score_pearson_full_vs_compressed": 0.2669,
+    "spearman_full_vs_labels": 0.3959,
+    "spearman_compressed_vs_labels": -0.1155,
+    "n_sample": 200
+  },
+  "routing": {
+    "full_accuracy": 0.3468,
+    "compressed_accuracy": 0.3443,
+    "delta_accuracy": -0.0025
+  },
+  "criterion_met": false,
+  "note": "Step content is mostly structured JSON (tool calls); compression ratio 1.4% far below 30% target. Signal degrades: Spearman +0.396 -> -0.116."
+}

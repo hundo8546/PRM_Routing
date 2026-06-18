@@ -1,0 +1,217 @@
+{
+  "config": {
+    "source_datasets": [
+      "hotpotqa",
+      "gaia_dev",
+      "bfcl"
+    ],
+    "target_dataset": "tau2",
+    "prm_signal": "versa"
+  },
+  "results": [
+    {
+      "policy": "Always-Cheap (T1)",
+      "indist_acc": 0.2324,
+      "indist_acc_std": 0.2984,
+      "indist_cost_norm": 39983.4,
+      "transfer_acc": 0.1703,
+      "transfer_acc_std": 0.1998,
+      "transfer_cost_norm": 76103.4,
+      "degradation": 0.0621,
+      "relative_degradation": 0.2671,
+      "transfer_esc_rate": 0.0,
+      "transfer_avg_tier": 1.0,
+      "transfer_stability": 1.0,
+      "indist_per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.4519421957704192,
+          "cost_norm": 6766.96
+        },
+        "gaia_dev": {
+          "accuracy": 0.19647171341253025,
+          "cost_norm": 40793.64
+        },
+        "bfcl": {
+          "accuracy": 0.04875555060849332,
+          "cost_norm": 72389.66
+        }
+      },
+      "transfer_per_dataset": {
+        "tau2": {
+          "accuracy": 0.170310217312346,
+          "cost_norm": 76103.42
+        }
+      }
+    },
+    {
+      "policy": "Uniform (T2)",
+      "indist_acc": 0.4464,
+      "indist_acc_std": 0.3028,
+      "indist_cost_norm": 179925.4,
+      "transfer_acc": 0.373,
+      "transfer_acc_std": 0.3,
+      "transfer_cost_norm": 342465.4,
+      "degradation": 0.0733,
+      "relative_degradation": 0.1643,
+      "transfer_esc_rate": 0.0,
+      "transfer_avg_tier": 2.0,
+      "transfer_stability": 1.0,
+      "indist_per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.6792657688695563,
+          "cost_norm": 30451.32
+        },
+        "gaia_dev": {
+          "accuracy": 0.39052555681177104,
+          "cost_norm": 183571.38
+        },
+        "bfcl": {
+          "accuracy": 0.2692760204258431,
+          "cost_norm": 325753.47
+        }
+      },
+      "transfer_per_dataset": {
+        "tau2": {
+          "accuracy": 0.37301769745323693,
+          "cost_norm": 342465.39
+        }
+      }
+    },
+    {
+      "policy": "Always-Frontier (T3)",
+      "indist_acc": 0.6826,
+      "indist_acc_std": 0.2345,
+      "indist_cost_norm": 359850.8,
+      "transfer_acc": 0.5996,
+      "transfer_acc_std": 0.2982,
+      "transfer_cost_norm": 684930.8,
+      "degradation": 0.083,
+      "relative_degradation": 0.1216,
+      "transfer_esc_rate": 1.0,
+      "transfer_avg_tier": 3.0,
+      "transfer_stability": 1.0,
+      "indist_per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.8477014808615005,
+          "cost_norm": 60902.64
+        },
+        "gaia_dev": {
+          "accuracy": 0.6134714942775774,
+          "cost_norm": 367142.76
+        },
+        "bfcl": {
+          "accuracy": 0.5866117896242454,
+          "cost_norm": 651506.94
+        }
+      },
+      "transfer_per_dataset": {
+        "tau2": {
+          "accuracy": 0.5995783617555783,
+          "cost_norm": 684930.78
+        }
+      }
+    },
+    {
+      "policy": "TRIM (\u03b8=0.75)",
+      "indist_acc": 0.329,
+      "indist_acc_std": 0.3216,
+      "indist_cost_norm": 178944.0,
+      "transfer_acc": 0.324,
+      "transfer_acc_std": 0.2686,
+      "transfer_cost_norm": 454233.3,
+      "degradation": 0.005,
+      "relative_degradation": 0.0152,
+      "transfer_esc_rate": 0.5052,
+      "transfer_avg_tier": 2.081,
+      "transfer_stability": 0.5912,
+      "indist_per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5354542291010752,
+          "cost_norm": 11460.25
+        },
+        "gaia_dev": {
+          "accuracy": 0.24185388254477289,
+          "cost_norm": 113026.58
+        },
+        "bfcl": {
+          "accuracy": 0.20956183537804185,
+          "cost_norm": 412345.31
+        }
+      },
+      "transfer_per_dataset": {
+        "tau2": {
+          "accuracy": 0.3239650929855481,
+          "cost_norm": 454233.33
+        }
+      }
+    },
+    {
+      "policy": "BAAR",
+      "indist_acc": 0.3877,
+      "indist_acc_std": 0.3299,
+      "indist_cost_norm": 254670.4,
+      "transfer_acc": 0.3555,
+      "transfer_acc_std": 0.2674,
+      "transfer_cost_norm": 549908.3,
+      "degradation": 0.0322,
+      "relative_degradation": 0.083,
+      "transfer_esc_rate": 0.6899,
+      "transfer_avg_tier": 2.38,
+      "transfer_stability": 0.7076,
+      "indist_per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5978289504956065,
+          "cost_norm": 45028.72
+        },
+        "gaia_dev": {
+          "accuracy": 0.30791885206366687,
+          "cost_norm": 312104.52
+        },
+        "bfcl": {
+          "accuracy": 0.25723631739096653,
+          "cost_norm": 406877.82
+        }
+      },
+      "transfer_per_dataset": {
+        "tau2": {
+          "accuracy": 0.3554663167776091,
+          "cost_norm": 549908.316
+        }
+      }
+    },
+    {
+      "policy": "PRM-Guided (h=0.86/l=0.62)",
+      "indist_acc": 0.4014,
+      "indist_acc_std": 0.3057,
+      "indist_cost_norm": 183037.4,
+      "transfer_acc": 0.3609,
+      "transfer_acc_std": 0.2774,
+      "transfer_cost_norm": 380298.8,
+      "degradation": 0.0405,
+      "relative_degradation": 0.1009,
+      "transfer_esc_rate": 0.2457,
+      "transfer_avg_tier": 2.018,
+      "transfer_stability": 0.5304,
+      "indist_per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5910934917842746,
+          "cost_norm": 20893.37
+        },
+        "gaia_dev": {
+          "accuracy": 0.3243570090538755,
+          "cost_norm": 152316.17
+        },
+        "bfcl": {
+          "accuracy": 0.28879531461106195,
+          "cost_norm": 375902.51
+        }
+      },
+      "transfer_per_dataset": {
+        "tau2": {
+          "accuracy": 0.36089784382623225,
+          "cost_norm": 380298.778
+        }
+      }
+    }
+  ]
+}
