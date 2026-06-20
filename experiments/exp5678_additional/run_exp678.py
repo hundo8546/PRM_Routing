@@ -53,12 +53,12 @@ def split(trajs, train_n=TRAIN_PER_DS):
 
 def print_comparison(results, versa_baseline, uniform_baseline):
     """Print results vs VersaPRM and Uniform baselines."""
-    hdr = f"{'Policy':<40} {'Acc':>7} {'CostN':>9} {'EscRate':>8} {'vs Versa':>9} {'vs Uniform':>10}"
+    hdr = f"{'Policy':<40} {'TSR':>7} {'Acc':>7} {'CostN':>9} {'EscRate':>8} {'vs Versa':>9} {'vs Uniform':>10}"
     print(hdr); print("-" * len(hdr))
     for name, r in results.items():
         da = r.mean_accuracy - versa_baseline.mean_accuracy
         du = r.mean_accuracy - uniform_baseline.mean_accuracy
-        print(f"{name:<40} {r.mean_accuracy:>7.4f} "
+        print(f"{name:<40} {r.task_success_rate:>7.4f} {r.mean_accuracy:>7.4f} "
               f"{r.mean_cost_norm_per_traj:>9.0f} "
               f"{r.escalation_rate:>8.3f} "
               f"{da:>+9.4f} {du:>+10.4f}")

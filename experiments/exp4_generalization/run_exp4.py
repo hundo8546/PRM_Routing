@@ -92,8 +92,8 @@ def run():
 
     results = []
 
-    print("Policy                        In-dist Acc  Transfer Acc  Degradation  EscRate(τ)  CostN(τ)")
-    print("-" * 95)
+    print("Policy                        In-dist TSR  Transfer TSR  In-dist Acc  Transfer Acc  Degradation  EscRate(τ)  CostN(τ)")
+    print("-" * 115)
 
     for policy in POLICIES:
         # In-distribution evaluation
@@ -105,7 +105,9 @@ def run():
         degradation = r_indist.mean_accuracy - r_transfer.mean_accuracy
         rel_degradation = degradation / r_indist.mean_accuracy if r_indist.mean_accuracy > 0 else 0
 
-        print(f"{policy.name:<30} {r_indist.mean_accuracy:>11.4f}  "
+        print(f"{policy.name:<30} {r_indist.task_success_rate:>11.4f}  "
+              f"{r_transfer.task_success_rate:>12.4f}  "
+              f"{r_indist.mean_accuracy:>11.4f}  "
               f"{r_transfer.mean_accuracy:>12.4f}  "
               f"{degradation:>+11.4f}  "
               f"{r_transfer.escalation_rate:>10.3f}  "
@@ -113,6 +115,8 @@ def run():
 
         results.append({
             "policy": policy.name,
+            "indist_tsr":          round(r_indist.task_success_rate, 4),
+            "transfer_tsr":        round(r_transfer.task_success_rate, 4),
             "indist_acc":          round(r_indist.mean_accuracy, 4),
             "indist_acc_std":      round(r_indist.std_accuracy, 4),
             "indist_cost_norm":    round(r_indist.mean_cost_norm_per_traj, 1),
@@ -176,12 +180,13 @@ def run():
         "Experiment 4: Domain Generalization",
         f"Source: {SOURCE_DATASETS} | Target: {TARGET_DATASET}",
         "",
-        f"{'Policy':<30} {'In-dist':>8} {'Transfer':>9} {'Degrad':>8} {'EscRate':>8} {'CostN':>8}",
-        "-" * 75,
+        f"{'Policy':<30} {'IndistTSR':>9} {'TransTSR':>9} {'In-dist':>8} {'Transfer':>9} {'Degrad':>8} {'EscRate':>8} {'CostN':>8}",
+        "-" * 95,
     ]
     for r in results:
         lines.append(
-            f"{r['policy']:<30} {r['indist_acc']:>8.4f} {r['transfer_acc']:>9.4f} "
+            f"{r['policy']:<30} {r['indist_tsr']:>9.4f} {r['transfer_tsr']:>9.4f} "
+            f"{r['indist_acc']:>8.4f} {r['transfer_acc']:>9.4f} "
             f"{r['degradation']:>+8.4f} {r['transfer_esc_rate']:>8.3f} "
             f"{r['transfer_cost_norm']:>8.0f}"
         )

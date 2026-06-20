@@ -65,16 +65,20 @@ FIXED_POLICIES = [
 
 def print_table(results):
     header = (
-        f"{'Policy':<28} {'Acc':>7} {'±':>5} {'Cost$':>9} {'CostN':>7} "
-        f"{'EscRate':>8} {'AvgTier':>8} {'Stability':>10}"
+        f"{'Policy':<28} {'TSR':>7} {'Acc':>7} {'±':>5} {'Cost$':>9} {'CostN':>7} "
+        f"{'$/Succ':>9} {'EscRate':>8} {'AvgTier':>8} {'Stability':>10}"
     )
     print(header)
     print("-" * len(header))
     for r in results:
         s = r.summary()
+        cps = s['cost_per_successful_task']
+        cps_str = f"{cps:>9.5f}" if cps < 1 else "     inf"
         print(
-            f"{s['policy']:<28} {s['accuracy']:>7.4f} {s['accuracy_std']:>5.4f} "
+            f"{s['policy']:<28} {s['task_success_rate']:>7.4f} {s['accuracy']:>7.4f} "
+            f"{s['accuracy_std']:>5.4f} "
             f"{s['cost_usd_per_traj']:>9.5f} {s['cost_norm_per_traj']:>7.1f} "
+            f"{cps_str} "
             f"{s['escalation_rate']:>8.3f} {s['avg_tier']:>8.3f} "
             f"{s['routing_stability']:>10.4f}"
         )
@@ -162,16 +166,20 @@ def run(prm_signal: str = "versa", save: bool = True, verbose: bool = True):
             f.write(f"PRM signal: {prm_signal} | Train: {TRAIN_PER_DS}/ds | Test: {TEST_PER_DS}/ds\n\n")
             lines = []
             header = (
-                f"{'Policy':<28} {'Acc':>7} {'±':>5} {'Cost$':>9} {'CostN':>7} "
-                f"{'EscRate':>8} {'AvgTier':>8} {'Stability':>10}"
+                f"{'Policy':<28} {'TSR':>7} {'Acc':>7} {'±':>5} {'Cost$':>9} {'CostN':>7} "
+                f"{'$/Succ':>9} {'EscRate':>8} {'AvgTier':>8} {'Stability':>10}"
             )
             lines.append(header)
             lines.append("-" * len(header))
             for r in policy_results:
                 s = r.summary()
+                cps = s['cost_per_successful_task']
+                cps_str = f"{cps:>9.5f}" if cps < 1 else "     inf"
                 lines.append(
-                    f"{s['policy']:<28} {s['accuracy']:>7.4f} {s['accuracy_std']:>5.4f} "
+                    f"{s['policy']:<28} {s['task_success_rate']:>7.4f} {s['accuracy']:>7.4f} "
+                    f"{s['accuracy_std']:>5.4f} "
                     f"{s['cost_usd_per_traj']:>9.5f} {s['cost_norm_per_traj']:>7.1f} "
+                    f"{cps_str} "
                     f"{s['escalation_rate']:>8.3f} {s['avg_tier']:>8.3f} "
                     f"{s['routing_stability']:>10.4f}"
                 )

@@ -256,17 +256,18 @@ def run():
     print(f"    acc={oracle_result.mean_accuracy:.4f}  cost_norm={oracle_result.mean_cost_norm_per_traj:.0f}  esc={oracle_result.escalation_rate:.3f}")
 
     # --- Print full table ---
-    print(f"\n{'='*100}")
+    print(f"\n{'='*110}")
     print("EXPERIMENT 3 RESULTS")
-    print(f"{'='*100}")
+    print(f"{'='*110}")
     hdr = (f"{'PRM':<24} {'θ_h':>5} {'θ_l':>5} {'Spearman':>9} "
-           f"{'Acc':>7} {'Cost(N)':>9} {'EscRate':>8} {'AvgTier':>8} "
+           f"{'TSR':>7} {'Acc':>7} {'Cost(N)':>9} {'EscRate':>8} {'AvgTier':>8} "
            f"{'BadToT3':>8} {'GoodToT1':>9} {'Prec':>6}")
     print(hdr); print("-"*len(hdr))
     for r in results_table:
         print(
             f"{r['display']:<24} {r['theta_high']:>5.3f} {r['theta_low']:>5.3f} "
             f"{r['exp1_spearman']:>+9.4f} "
+            f"{r.get('task_success_rate', 0):>7.4f} "
             f"{r['accuracy']:>7.4f} {r['cost_norm_per_traj']:>9.0f} "
             f"{r['escalation_rate']:>8.3f} {r['avg_tier']:>8.3f} "
             f"{r.get('rq_bad_to_t3_rate',0):>8.3f} {r.get('rq_good_to_t1_rate',0):>9.3f} "
@@ -299,6 +300,7 @@ def run():
         lines.append(
             f"{r['display']:<24} {r['theta_high']:>5.3f} {r['theta_low']:>5.3f} "
             f"{r['exp1_spearman']:>+9.4f} "
+            f"{r.get('task_success_rate', 0):>7.4f} "
             f"{r['accuracy']:>7.4f} {r['cost_norm_per_traj']:>9.0f} "
             f"{r['escalation_rate']:>8.3f} {r['avg_tier']:>8.3f} "
             f"{r.get('rq_bad_to_t3_rate',0):>8.3f} {r.get('rq_good_to_t1_rate',0):>9.3f} "

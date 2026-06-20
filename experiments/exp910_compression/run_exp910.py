@@ -47,7 +47,7 @@ RESULTS = {9: ROOT / "results/exp9", 10: ROOT / "results/exp10"}
 
 # Test set: last 50/dataset (same as Exp 2/3)
 TRAIN_PER_DS, TEST_PER_DS, TOTAL_PER_DS = 200, 50, 250
-N_SCORE_SAMPLE = 400   # steps to re-score with VersaPRM
+N_SCORE_SAMPLE = 1918  # steps to re-score with VersaPRM (full test set)
 
 # ---------------------------------------------------------------------------
 # Caveman compression (improved: preserves numbers, entities, key verbs)
@@ -426,12 +426,22 @@ def run():
     r_comp_map   = {(test_steps[i]["dataset"], test_steps[i]["global_idx"], test_steps[i]["msg_idx"]): float(sc)
                     for i, sc in enumerate(scored["retr_comp"])}
 
-    print(f"\n{'Routing results (PRMGuided h=0.86/l=0.62)'}")
-    print(f"{'Variant':<36} {'Acc':>7} {'CostN':>9} {'EscRate':>9} {'ΔAcc':>8}")
-    r_base = simulate_routing_from_scores(test_trajs, baseline_map)
-    print(f"{'A. Baseline':<36} {r_base.mean_accuracy:>7.4f} "
-          f"{r_base.mean_cost_norm_per_traj:>9.0f} {r_base.escalation_rate:>9.3f}  {'—':>6}")
+    # Token savings per variant (relative to baseline input context)
+    variant_token_savings = {
+        "A. Baseline":                   0.0,
+        "B. Exp9 (q_comp+step)":         comp_stats["query_compression_ratio"],
+        "C. Exp10a (q+retr_full+step)":  0.0,   # adds retrieval context, no savings
+        "D. Exp10b (q+retr_comp+step)":  comp_stats["retrieval_compression_ratio"],
+    }
 
+    print(f"\n{'Routing results (PRMGuided h=0.86/l=0.62)'}")
+    print(f"{'Variant':<36} {'TSR':>7} {'Acc':>7} {'CostN':>9} {'EscRate':>9} {'TokSave':>8} {'ΔAcc':>8}")
+    r_base = simulate_routing_from_scores(test_trajs, baseline_map)
+    print(f"{'A. Baseline':<36} {r_base.task_success_rate:>7.4f} {r_base.mean_accuracy:>7.4f} "
+          f"{r_base.mean_cost_norm_per_traj:>9.0f} {r_base.escalation_rate:>9.3f} "
+          f"{'0.0%':>8}  {'—':>6}")
+
+    routing_tsr = {"baseline": round(r_base.task_success_rate, 4)}
     for name, score_map in [
         ("B. Exp9 (q_comp+step)", q_comp_map),
         ("C. Exp10a (q+retr_full+step)", r_full_map),
@@ -439,8 +449,11 @@ def run():
     ]:
         r = simulate_routing_from_scores(test_trajs, score_map)
         da = r.mean_accuracy - r_base.mean_accuracy
-        print(f"{name:<36} {r.mean_accuracy:>7.4f} "
-              f"{r.mean_cost_norm_per_traj:>9.0f} {r.escalation_rate:>9.3f} {da:>+8.4f}")
+        tok_save = variant_token_savings[name]
+        routing_tsr[name] = round(r.task_success_rate, 4)
+        print(f"{name:<36} {r.task_success_rate:>7.4f} {r.mean_accuracy:>7.4f} "
+              f"{r.mean_cost_norm_per_traj:>9.0f} {r.escalation_rate:>9.3f} "
+              f"{tok_save:>7.1%} {da:>+8.4f}")
 
     # Criterion checks
     print("\n[Exp 9 criterion] query_reduction ≥ 25%, Δacc ≤ 2pp, Δprec ≤ 5pp")
@@ -481,6 +494,7 @@ def run():
             "retr_comp_spearman": round(sp10d, 4),
             "retr_comp_prec": round(prec10d, 4),
         },
+        "routing_tsr": routing_tsr,
         "exp9_criterion_met": exp9_met,
         "exp10_criterion_met": exp10_met,
         "n_scored": N_SCORE_SAMPLE,
@@ -488,6 +502,21 @@ def run():
     for exp_num, path in RESULTS.items():
         with open(path / f"exp{exp_num}_results.json", "w") as f:
             json.dump(result, f, indent=2)
+
+    # Save per-step retr_full scores for Exp 15 if --save-scores flag passed
+    import sys as _sys
+    if "--save-scores" in _sys.argv:
+        retr_path = ROOT / "results/exp10/exp10_retr_scores.jsonl"
+        with open(retr_path, "w") as f:
+            for (ds, g_idx, msg_idx), score in r_full_map.items():
+                f.write(json.dumps({
+                    "dataset": ds, "traj_idx": g_idx,
+                    "msg_idx": msg_idx, "retr_full_score": score
+                }) + "\n")
+        print(f"  Per-step retr_full scores saved to {retr_path} ({len(r_full_map)} steps)")
+        print(f"  Run Exp 15 to combine with UA-3: "
+              f"python3 experiments/exp15_retr_ua3/run_exp15.py")
+
     print(f"\nResults saved to results/exp9/ and results/exp10/")
     return result
 

@@ -1,0 +1,248 @@
+{
+  "config": {
+    "min_window": 3,
+    "fallback_theta_low": 0.62,
+    "fallback_theta_high": 0.86,
+    "success_threshold": 0.5
+  },
+  "results": [
+    {
+      "policy": "PRM-Guided (h=0.86/l=0.62)",
+      "per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5910934917842746,
+          "cost_norm": 20893.37
+        },
+        "gaia_dev": {
+          "accuracy": 0.3243570090538755,
+          "cost_norm": 152316.17
+        },
+        "bfcl": {
+          "accuracy": 0.28879531461106195,
+          "cost_norm": 375902.51
+        },
+        "tau2": {
+          "accuracy": 0.182930902808222,
+          "cost_norm": 743541.2
+        }
+      },
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.201977,
+      "accuracy": 0.3468,
+      "accuracy_std": 0.3035,
+      "cost_usd_total": 12.926533,
+      "cost_usd_per_traj": 0.064633,
+      "cost_norm_per_traj": 323163.31,
+      "escalation_rate": 0.1475,
+      "avg_tier": 1.939,
+      "routing_stability": 0.5466,
+      "rq_routing_precision": 0.5406,
+      "rq_bad_to_t3_rate": 0.1855,
+      "rq_good_to_t1_rate": 0.249
+    },
+    {
+      "policy": "DynP10/90",
+      "per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5967612540717948,
+          "cost_norm": 29338.09
+        },
+        "gaia_dev": {
+          "accuracy": 0.33896656576129247,
+          "cost_norm": 192236.71
+        },
+        "bfcl": {
+          "accuracy": 0.26913162444383665,
+          "cost_norm": 354330.67
+        },
+        "tau2": {
+          "accuracy": 0.22873129249241855,
+          "cost_norm": 849589.26
+        }
+      },
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.222734,
+      "accuracy": 0.3584,
+      "accuracy_std": 0.3016,
+      "cost_usd_total": 14.254947,
+      "cost_usd_per_traj": 0.071275,
+      "cost_norm_per_traj": 356373.68,
+      "escalation_rate": 0.2096,
+      "avg_tier": 2.06,
+      "routing_stability": 0.5244,
+      "rq_routing_precision": 0.4229,
+      "rq_bad_to_t3_rate": 0.2061,
+      "rq_good_to_t1_rate": 0.2127
+    },
+    {
+      "policy": "DynP20/80",
+      "per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5967612540717948,
+          "cost_norm": 29338.09
+        },
+        "gaia_dev": {
+          "accuracy": 0.3400323746470075,
+          "cost_norm": 197713.89
+        },
+        "bfcl": {
+          "accuracy": 0.2635257337373466,
+          "cost_norm": 351240.28
+        },
+        "tau2": {
+          "accuracy": 0.2407649160705504,
+          "cost_norm": 901019.0
+        }
+      },
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.231142,
+      "accuracy": 0.3603,
+      "accuracy_std": 0.2999,
+      "cost_usd_total": 14.793113,
+      "cost_usd_per_traj": 0.073966,
+      "cost_norm_per_traj": 369827.82,
+      "escalation_rate": 0.2623,
+      "avg_tier": 2.09,
+      "routing_stability": 0.4674,
+      "rq_routing_precision": 0.4712,
+      "rq_bad_to_t3_rate": 0.2873,
+      "rq_good_to_t1_rate": 0.2355
+    },
+    {
+      "policy": "DynP25/75",
+      "per_dataset": {
+        "hotpotqa": {
+          "accuracy": 0.5958134251556698,
+          "cost_norm": 28656.5
+        },
+        "gaia_dev": {
+          "accuracy": 0.33715882311264345,
+          "cost_norm": 206897.16
+        },
+        "bfcl": {
+          "accuracy": 0.25690494006130726,
+          "cost_norm": 355447.27
+        },
+        "tau2": {
+          "accuracy": 0.23877383212056663,
+          "cost_norm": 916777.31
+        }
+      },
+      "task_success_rate": 0.325,
+      "cost_per_successful_task": 0.231966,
+      "accuracy": 0.3572,
+      "accuracy_std": 0.3027,
+      "cost_usd_total": 15.077782,
+      "cost_usd_per_traj": 0.075389,
+      "cost_norm_per_traj": 376944.56,
+      "escalation_rate": 0.2904,
+      "avg_tier": 2.103,
+      "routing_stability": 0.4366,
+      "rq_routing_precision": 0.465,
+      "rq_bad_to_t3_rate": 0.3139,
+      "rq_good_to_t1_rate": 0.2417
+    }
+  ],
+  "pareto": [
+    {
+      "policy": "DynP5/95",
+      "pct_low": 5,
+      "pct_high": 95,
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.219171,
+      "accuracy": 0.3583,
+      "accuracy_std": 0.3015,
+      "cost_usd_total": 14.026916,
+      "cost_usd_per_traj": 0.070135,
+      "cost_norm_per_traj": 350672.9,
+      "escalation_rate": 0.1908,
+      "avg_tier": 2.048,
+      "routing_stability": 0.5576,
+      "routing_precision": 0.4071
+    },
+    {
+      "policy": "DynP10/90",
+      "pct_low": 10,
+      "pct_high": 90,
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.222734,
+      "accuracy": 0.3584,
+      "accuracy_std": 0.3016,
+      "cost_usd_total": 14.254947,
+      "cost_usd_per_traj": 0.071275,
+      "cost_norm_per_traj": 356373.68,
+      "escalation_rate": 0.2096,
+      "avg_tier": 2.06,
+      "routing_stability": 0.5244,
+      "routing_precision": 0.4229
+    },
+    {
+      "policy": "DynP15/85",
+      "pct_low": 15,
+      "pct_high": 85,
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.228496,
+      "accuracy": 0.3601,
+      "accuracy_std": 0.3008,
+      "cost_usd_total": 14.623744,
+      "cost_usd_per_traj": 0.073119,
+      "cost_norm_per_traj": 365593.61,
+      "escalation_rate": 0.2435,
+      "avg_tier": 2.081,
+      "routing_stability": 0.4959,
+      "routing_precision": 0.4561
+    },
+    {
+      "policy": "DynP20/80",
+      "pct_low": 20,
+      "pct_high": 80,
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.231142,
+      "accuracy": 0.3603,
+      "accuracy_std": 0.2999,
+      "cost_usd_total": 14.793113,
+      "cost_usd_per_traj": 0.073966,
+      "cost_norm_per_traj": 369827.82,
+      "escalation_rate": 0.2623,
+      "avg_tier": 2.09,
+      "routing_stability": 0.4674,
+      "routing_precision": 0.4712
+    },
+    {
+      "policy": "DynP25/75",
+      "pct_low": 25,
+      "pct_high": 75,
+      "task_success_rate": 0.325,
+      "cost_per_successful_task": 0.231966,
+      "accuracy": 0.3572,
+      "accuracy_std": 0.3027,
+      "cost_usd_total": 15.077782,
+      "cost_usd_per_traj": 0.075389,
+      "cost_norm_per_traj": 376944.56,
+      "escalation_rate": 0.2904,
+      "avg_tier": 2.103,
+      "routing_stability": 0.4366,
+      "routing_precision": 0.465
+    },
+    {
+      "policy": "DynP30/70",
+      "pct_low": 30,
+      "pct_high": 70,
+      "task_success_rate": 0.33,
+      "cost_per_successful_task": 0.227803,
+      "accuracy": 0.3573,
+      "accuracy_std": 0.3037,
+      "cost_usd_total": 15.035022,
+      "cost_usd_per_traj": 0.075175,
+      "cost_norm_per_traj": 375875.54,
+      "escalation_rate": 0.3175,
+      "avg_tier": 2.101,
+      "routing_stability": 0.4203,
+      "routing_precision": 0.4778
+    }
+  ],
+  "fixed_baseline": {
+    "task_success_rate": 0.32,
+    "cost_norm_per_traj": 323163.3
+  }
+}

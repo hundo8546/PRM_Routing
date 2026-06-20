@@ -2,6 +2,8 @@
   "fixed": {
     "Temporal \u03c4_drop=0.10": {
       "policy": "Temporal \u03c4_drop=0.10",
+      "task_success_rate": 0.33,
+      "cost_per_successful_task": 0.220271,
       "accuracy": 0.3596,
       "accuracy_std": 0.3045,
       "cost_usd_total": 14.53786,
@@ -13,6 +15,8 @@
     },
     "Temporal \u03c4_drop=0.15": {
       "policy": "Temporal \u03c4_drop=0.15",
+      "task_success_rate": 0.325,
+      "cost_per_successful_task": 0.211524,
       "accuracy": 0.3523,
       "accuracy_std": 0.3032,
       "cost_usd_total": 13.749042,
@@ -24,6 +28,8 @@
     },
     "Temporal \u03c4_drop=0.25": {
       "policy": "Temporal \u03c4_drop=0.25",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.203222,
       "accuracy": 0.3472,
       "accuracy_std": 0.3035,
       "cost_usd_total": 13.006187,
@@ -37,6 +43,8 @@
   "pareto": [
     {
       "policy": "Temporal \u03c4_drop=0.05",
+      "task_success_rate": 0.335,
+      "cost_per_successful_task": 0.236293,
       "accuracy": 0.3737,
       "accuracy_std": 0.3073,
       "cost_usd_total": 15.83161,
@@ -49,6 +57,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.08",
+      "task_success_rate": 0.33,
+      "cost_per_successful_task": 0.230064,
       "accuracy": 0.3653,
       "accuracy_std": 0.3067,
       "cost_usd_total": 15.184197,
@@ -61,6 +71,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.11",
+      "task_success_rate": 0.325,
+      "cost_per_successful_task": 0.216808,
       "accuracy": 0.3555,
       "accuracy_std": 0.3037,
       "cost_usd_total": 14.092504,
@@ -73,6 +85,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.15",
+      "task_success_rate": 0.325,
+      "cost_per_successful_task": 0.211872,
       "accuracy": 0.3524,
       "accuracy_std": 0.3033,
       "cost_usd_total": 13.771671,
@@ -85,6 +99,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.18",
+      "task_success_rate": 0.325,
+      "cost_per_successful_task": 0.209546,
       "accuracy": 0.351,
       "accuracy_std": 0.3033,
       "cost_usd_total": 13.620493,
@@ -97,6 +113,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.21",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.206235,
       "accuracy": 0.3482,
       "accuracy_std": 0.3037,
       "cost_usd_total": 13.199012,
@@ -109,6 +127,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.24",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.203672,
       "accuracy": 0.3472,
       "accuracy_std": 0.3035,
       "cost_usd_total": 13.034981,
@@ -121,6 +141,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.27",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.20252,
       "accuracy": 0.3469,
       "accuracy_std": 0.3036,
       "cost_usd_total": 12.96129,
@@ -133,6 +155,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.30",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.202091,
       "accuracy": 0.3468,
       "accuracy_std": 0.3035,
       "cost_usd_total": 12.93382,
@@ -145,6 +169,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.34",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.201977,
       "accuracy": 0.3468,
       "accuracy_std": 0.3035,
       "cost_usd_total": 12.926533,
@@ -157,6 +183,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.37",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.201977,
       "accuracy": 0.3468,
       "accuracy_std": 0.3035,
       "cost_usd_total": 12.926533,
@@ -169,6 +197,8 @@
     },
     {
       "policy": "Temporal \u03c4_drop=0.40",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.201977,
       "accuracy": 0.3468,
       "accuracy_std": 0.3035,
       "cost_usd_total": 12.926533,
@@ -182,6 +212,8 @@
   ],
   "versa_baseline": {
     "policy": "PRM-Guided (h=0.86/l=0.62)",
+    "task_success_rate": 0.32,
+    "cost_per_successful_task": 0.201977,
     "accuracy": 0.3468,
     "accuracy_std": 0.3035,
     "cost_usd_total": 12.926533,

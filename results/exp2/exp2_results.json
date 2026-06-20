@@ -7,6 +7,8 @@
   "results": [
     {
       "policy": "Always-Cheap (T1)",
+      "task_success_rate": 0.155,
+      "cost_per_successful_task": 0.090685,
       "accuracy": 0.1937,
       "accuracy_std": 0.2753,
       "cost_usd_total": 2.811239,
@@ -18,6 +20,8 @@
     },
     {
       "policy": "Uniform (T2)",
+      "task_success_rate": 0.37,
+      "cost_per_successful_task": 0.170954,
       "accuracy": 0.3881,
       "accuracy_std": 0.3098,
       "cost_usd_total": 12.650577,
@@ -29,6 +33,8 @@
     },
     {
       "policy": "Always-Frontier (T3)",
+      "task_success_rate": 0.69,
+      "cost_per_successful_task": 0.183342,
       "accuracy": 0.6168,
       "accuracy_std": 0.28,
       "cost_usd_total": 25.301155,
@@ -40,6 +46,8 @@
     },
     {
       "policy": "DAAO",
+      "task_success_rate": 0.155,
+      "cost_per_successful_task": 0.090685,
       "accuracy": 0.1937,
       "accuracy_std": 0.2753,
       "cost_usd_total": 2.811239,
@@ -51,6 +59,8 @@
     },
     {
       "policy": "BAAR",
+      "task_success_rate": 0.34,
+      "cost_per_successful_task": 0.28939,
       "accuracy": 0.3382,
       "accuracy_std": 0.3234,
       "cost_usd_total": 19.678521,
@@ -62,6 +72,8 @@
     },
     {
       "policy": "TRIM (\u03b8=0.75)",
+      "task_success_rate": 0.28,
+      "cost_per_successful_task": 0.276793,
       "accuracy": 0.2977,
       "accuracy_std": 0.3079,
       "cost_usd_total": 15.500403,
@@ -73,6 +85,8 @@
     },
     {
       "policy": "PRM-Guided (h=0.86/l=0.62)",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.201977,
       "accuracy": 0.3468,
       "accuracy_std": 0.3035,
       "cost_usd_total": 12.926533,

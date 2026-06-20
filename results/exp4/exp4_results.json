@@ -11,6 +11,8 @@
   "results": [
     {
       "policy": "Always-Cheap (T1)",
+      "indist_tsr": 0.2,
+      "transfer_tsr": 0.072,
       "indist_acc": 0.2324,
       "indist_acc_std": 0.2984,
       "indist_cost_norm": 39983.4,
@@ -45,6 +47,8 @@
     },
     {
       "policy": "Uniform (T2)",
+      "indist_tsr": 0.4267,
+      "transfer_tsr": 0.392,
       "indist_acc": 0.4464,
       "indist_acc_std": 0.3028,
       "indist_cost_norm": 179925.4,
@@ -79,6 +83,8 @@
     },
     {
       "policy": "Always-Frontier (T3)",
+      "indist_tsr": 0.7933,
+      "transfer_tsr": 0.632,
       "indist_acc": 0.6826,
       "indist_acc_std": 0.2345,
       "indist_cost_norm": 359850.8,
@@ -113,6 +119,8 @@
     },
     {
       "policy": "TRIM (\u03b8=0.75)",
+      "indist_tsr": 0.3067,
+      "transfer_tsr": 0.372,
       "indist_acc": 0.329,
       "indist_acc_std": 0.3216,
       "indist_cost_norm": 178944.0,
@@ -147,6 +155,8 @@
     },
     {
       "policy": "BAAR",
+      "indist_tsr": 0.4,
+      "transfer_tsr": 0.456,
       "indist_acc": 0.3877,
       "indist_acc_std": 0.3299,
       "indist_cost_norm": 254670.4,
@@ -181,6 +191,8 @@
     },
     {
       "policy": "PRM-Guided (h=0.86/l=0.62)",
+      "indist_tsr": 0.3733,
+      "transfer_tsr": 0.416,
       "indist_acc": 0.4014,
       "indist_acc_std": 0.3057,
       "indist_cost_norm": 183037.4,

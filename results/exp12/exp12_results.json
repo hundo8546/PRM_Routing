@@ -1,0 +1,281 @@
+{
+  "config": {
+    "train_per_dataset": 200,
+    "test_per_dataset": 50,
+    "prm_signal": "versa",
+    "success_threshold": 0.5,
+    "live_calibration": {
+      "openai": true,
+      "anthropic": true
+    }
+  },
+  "calibration": {
+    "t2_gpt": {
+      "p_good": 0.46,
+      "p_bad": 0.48,
+      "cost_usd": 0.4131449999999998,
+      "model": "gpt-5.5",
+      "n_good": 50,
+      "n_bad": 50
+    },
+    "t3_claude": {
+      "p_good": 0.26,
+      "p_bad": 0.3673469387755102,
+      "cost_usd": 0.38785500000000006,
+      "model": "claude-opus-4-8",
+      "n_good": 50,
+      "n_bad": 49
+    }
+  },
+  "stacks": {
+    "Original (Exp 2)": {
+      "tier_names": {
+        "1": "Llama-3.1-8B",
+        "2": "Llama-3.1-70B",
+        "3": "Qwen2.5-72B"
+      },
+      "capability_gap": {
+        "always_t1_tsr": 0.155,
+        "always_t1_acc": 0.1937,
+        "always_t3_tsr": 0.69,
+        "always_t3_acc": 0.6168,
+        "tsr_gap": 0.535,
+        "acc_gap": 0.4231
+      },
+      "results": [
+        {
+          "policy": "Always-Cheap (T1)",
+          "task_success_rate": 0.155,
+          "cost_per_successful_task": 0.090685,
+          "accuracy": 0.1937,
+          "accuracy_std": 0.2753,
+          "cost_usd_total": 2.811239,
+          "cost_usd_per_traj": 0.014056,
+          "cost_norm_per_traj": 70280.99,
+          "escalation_rate": 0.0,
+          "avg_tier": 1.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "Uniform (T2)",
+          "task_success_rate": 0.37,
+          "cost_per_successful_task": 0.170954,
+          "accuracy": 0.3881,
+          "accuracy_std": 0.3098,
+          "cost_usd_total": 12.650577,
+          "cost_usd_per_traj": 0.063253,
+          "cost_norm_per_traj": 316264.43,
+          "escalation_rate": 0.0,
+          "avg_tier": 2.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "Always-Frontier (T3)",
+          "task_success_rate": 0.69,
+          "cost_per_successful_task": 0.183342,
+          "accuracy": 0.6168,
+          "accuracy_std": 0.28,
+          "cost_usd_total": 25.301155,
+          "cost_usd_per_traj": 0.126506,
+          "cost_norm_per_traj": 632528.86,
+          "escalation_rate": 1.0,
+          "avg_tier": 3.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "TRIM (\u03b8=0.75)",
+          "task_success_rate": 0.28,
+          "cost_per_successful_task": 0.276793,
+          "accuracy": 0.2977,
+          "accuracy_std": 0.3079,
+          "cost_usd_total": 15.500403,
+          "cost_usd_per_traj": 0.077502,
+          "cost_norm_per_traj": 387510.09,
+          "escalation_rate": 0.4687,
+          "avg_tier": 2.042,
+          "routing_stability": 0.5576
+        },
+        {
+          "policy": "PRM-Guided (h=0.86/l=0.62)",
+          "task_success_rate": 0.32,
+          "cost_per_successful_task": 0.201977,
+          "accuracy": 0.3468,
+          "accuracy_std": 0.3035,
+          "cost_usd_total": 12.926533,
+          "cost_usd_per_traj": 0.064633,
+          "cost_norm_per_traj": 323163.31,
+          "escalation_rate": 0.1475,
+          "avg_tier": 1.939,
+          "routing_stability": 0.5466
+        }
+      ],
+      "prm_advantage_tsr": -0.05
+    },
+    "Modern Recommended": {
+      "tier_names": {
+        "1": "Qwen3-8B",
+        "2": "GPT-5.5",
+        "3": "Claude-Opus-4.7"
+      },
+      "capability_gap": {
+        "always_t1_tsr": 0.185,
+        "always_t1_acc": 0.2622,
+        "always_t3_tsr": 0.0,
+        "always_t3_acc": 0.0267,
+        "tsr_gap": -0.185,
+        "acc_gap": -0.2355
+      },
+      "results": [
+        {
+          "policy": "Always-Cheap (T1)",
+          "task_success_rate": 0.185,
+          "cost_per_successful_task": 0.083577,
+          "accuracy": 0.2622,
+          "accuracy_std": 0.2813,
+          "cost_usd_total": 3.092363,
+          "cost_usd_per_traj": 0.015462,
+          "cost_norm_per_traj": 70280.99,
+          "escalation_rate": 0.0,
+          "avg_tier": 1.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "Uniform (T2)",
+          "task_success_rate": 0.0,
+          "cost_per_successful_task": Infinity,
+          "accuracy": 0.0611,
+          "accuracy_std": 0.1071,
+          "cost_usd_total": 54.909439,
+          "cost_usd_per_traj": 0.274547,
+          "cost_norm_per_traj": 1197971.34,
+          "escalation_rate": 0.0,
+          "avg_tier": 2.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "Always-Frontier (T3)",
+          "task_success_rate": 0.0,
+          "cost_per_successful_task": Infinity,
+          "accuracy": 0.0267,
+          "accuracy_std": 0.0688,
+          "cost_usd_total": 222.569355,
+          "cost_usd_per_traj": 1.112847,
+          "cost_norm_per_traj": 4791885.34,
+          "escalation_rate": 1.0,
+          "avg_tier": 3.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "TRIM (\u03b8=0.75)",
+          "task_success_rate": 0.0,
+          "cost_per_successful_task": Infinity,
+          "accuracy": 0.1022,
+          "accuracy_std": 0.1535,
+          "cost_usd_total": 123.940152,
+          "cost_usd_per_traj": 0.619701,
+          "cost_norm_per_traj": 2688961.03,
+          "escalation_rate": 0.4687,
+          "avg_tier": 2.042,
+          "routing_stability": 0.5576
+        },
+        {
+          "policy": "PRM-Guided (h=0.86/l=0.62)",
+          "task_success_rate": 0.0,
+          "cost_per_successful_task": Infinity,
+          "accuracy": 0.0837,
+          "accuracy_std": 0.1326,
+          "cost_usd_total": 73.231846,
+          "cost_usd_per_traj": 0.366159,
+          "cost_norm_per_traj": 1588544.93,
+          "escalation_rate": 0.1475,
+          "avg_tier": 1.939,
+          "routing_stability": 0.5466
+        }
+      ],
+      "prm_advantage_tsr": 0.0
+    },
+    "Modern Open-Weight": {
+      "tier_names": {
+        "1": "Gemma4-E4B",
+        "2": "Qwen3-8B",
+        "3": "Qwen3-30B-A3B"
+      },
+      "capability_gap": {
+        "always_t1_tsr": 0.15,
+        "always_t1_acc": 0.2062,
+        "always_t3_tsr": 0.415,
+        "always_t3_acc": 0.4464,
+        "tsr_gap": 0.265,
+        "acc_gap": 0.2402
+      },
+      "results": [
+        {
+          "policy": "Always-Cheap (T1)",
+          "task_success_rate": 0.15,
+          "cost_per_successful_task": 0.046854,
+          "accuracy": 0.2062,
+          "accuracy_std": 0.2666,
+          "cost_usd_total": 1.40562,
+          "cost_usd_per_traj": 0.007028,
+          "cost_norm_per_traj": 70280.99,
+          "escalation_rate": 0.0,
+          "avg_tier": 1.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "Uniform (T2)",
+          "task_success_rate": 0.185,
+          "cost_per_successful_task": 0.083577,
+          "accuracy": 0.2622,
+          "accuracy_std": 0.2813,
+          "cost_usd_total": 3.092363,
+          "cost_usd_per_traj": 0.015462,
+          "cost_norm_per_traj": 154618.17,
+          "escalation_rate": 0.0,
+          "avg_tier": 2.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "Always-Frontier (T3)",
+          "task_success_rate": 0.415,
+          "cost_per_successful_task": 0.084676,
+          "accuracy": 0.4464,
+          "accuracy_std": 0.3058,
+          "cost_usd_total": 7.028099,
+          "cost_usd_per_traj": 0.03514,
+          "cost_norm_per_traj": 351404.92,
+          "escalation_rate": 1.0,
+          "avg_tier": 3.0,
+          "routing_stability": 1.0
+        },
+        {
+          "policy": "TRIM (\u03b8=0.75)",
+          "task_success_rate": 0.205,
+          "cost_per_successful_task": 0.110745,
+          "accuracy": 0.2642,
+          "accuracy_std": 0.2755,
+          "cost_usd_total": 4.540556,
+          "cost_usd_per_traj": 0.022703,
+          "cost_norm_per_traj": 227027.8,
+          "escalation_rate": 0.4687,
+          "avg_tier": 2.042,
+          "routing_stability": 0.5576
+        },
+        {
+          "policy": "PRM-Guided (h=0.86/l=0.62)",
+          "task_success_rate": 0.19,
+          "cost_per_successful_task": 0.090408,
+          "accuracy": 0.2598,
+          "accuracy_std": 0.2755,
+          "cost_usd_total": 3.435506,
+          "cost_usd_per_traj": 0.017178,
+          "cost_norm_per_traj": 171775.32,
+          "escalation_rate": 0.1475,
+          "avg_tier": 1.939,
+          "routing_stability": 0.5466
+        }
+      ],
+      "prm_advantage_tsr": 0.005
+    }
+  }
+}

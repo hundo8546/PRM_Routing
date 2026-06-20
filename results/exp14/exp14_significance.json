@@ -1,0 +1,61 @@
+{
+  "n_trajectories": 200,
+  "n_bootstrap": 10000,
+  "alpha": 0.05,
+  "baseline": "Fixed PRM-Guided",
+  "baseline_tsr": 0.32,
+  "baseline_ci_95": [
+    0.255,
+    0.385
+  ],
+  "comparisons": {
+    "UA-1 (0.10/0.25)": {
+      "tsr": 0.385,
+      "tsr_base": 0.32,
+      "observed_delta": 0.065,
+      "p_value": 0.0009,
+      "significant": true,
+      "cohens_h": 0.1362,
+      "ci_95": [
+        0.32,
+        0.455
+      ],
+      "ci_base_95": [
+        0.255,
+        0.385
+      ]
+    },
+    "UA-2 (0.05/0.15)": {
+      "tsr": 0.42,
+      "tsr_base": 0.32,
+      "observed_delta": 0.1,
+      "p_value": 0.0,
+      "significant": true,
+      "cohens_h": 0.2076,
+      "ci_95": [
+        0.35,
+        0.485
+      ],
+      "ci_base_95": [
+        0.255,
+        0.385
+      ]
+    },
+    "UA-3 (0.15/0.30)": {
+      "tsr": 0.385,
+      "tsr_base": 0.32,
+      "observed_delta": 0.065,
+      "p_value": 0.0008,
+      "significant": true,
+      "cohens_h": 0.1362,
+      "ci_95": [
+        0.32,
+        0.455
+      ],
+      "ci_base_95": [
+        0.255,
+        0.385
+      ]
+    }
+  }
+}

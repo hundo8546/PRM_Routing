@@ -33,6 +33,7 @@ class StepRecord:
     input_tokens: int       # estimated context tokens at this step
     output_tokens: int      # estimated output tokens for this step
     question: str
+    step_content: str = ""  # raw message content + tool call text (truncated to 600 chars)
 
 
 @dataclass
@@ -142,20 +143,24 @@ def load_trajectories(prm_name: str = "versa", n_per_dataset: int = 250) -> List
                     input_tok = _context_tokens_at(msgs, msg_idx)
                     output_tok = _step_tokens(msg)
 
-                    # Infer step type from message
+                    # Infer step type from message and build step_content for judge
                     tc = msg.get("tool_calls", "") or ""
                     content = msg.get("content", "") or ""
+                    tc_text = ""
                     if tc and tc not in ("", "[]"):
                         try:
                             tc_parsed = json.loads(tc) if isinstance(tc, str) else tc
                             fn = tc_parsed[0].get("function", {}).get("name", "") if tc_parsed else ""
                             step_type = "retrieval" if ("search" in fn or "retriev" in fn) else "tool_call"
+                            tc_text = json.dumps(tc_parsed)
                         except Exception:
                             step_type = "tool_call"
+                            tc_text = str(tc)
                     elif content:
                         step_type = "synthesis"
                     else:
                         step_type = "unknown"
+                    step_content = (content + " " + tc_text).strip()[:600]
 
                     step = StepRecord(
                         traj_idx=local_idx,
@@ -171,6 +176,7 @@ def load_trajectories(prm_name: str = "versa", n_per_dataset: int = 250) -> List
                         input_tokens=input_tok,
                         output_tokens=output_tok,
                         question=question[:100],
+                        step_content=step_content,
                     )
                     traj.steps.append(step)
 

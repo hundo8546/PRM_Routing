@@ -2,6 +2,8 @@
   "fixed": {
     "MultiJudge \u03c4=0.15": {
       "policy": "MultiJudge \u03c4=0.15",
+      "task_success_rate": 0.36,
+      "cost_per_successful_task": 0.243856,
       "accuracy": 0.3784,
       "accuracy_std": 0.2992,
       "cost_usd_total": 17.557666,
@@ -13,6 +15,8 @@
     },
     "MultiJudge \u03c4=0.20": {
       "policy": "MultiJudge \u03c4=0.20",
+      "task_success_rate": 0.345,
+      "cost_per_successful_task": 0.242733,
       "accuracy": 0.3669,
       "accuracy_std": 0.3003,
       "cost_usd_total": 16.748572,
@@ -24,6 +28,8 @@
     },
     "MultiJudge \u03c4=0.30": {
       "policy": "MultiJudge \u03c4=0.30",
+      "task_success_rate": 0.315,
+      "cost_per_successful_task": 0.199413,
       "accuracy": 0.3416,
       "accuracy_std": 0.3029,
       "cost_usd_total": 12.563034,
@@ -37,6 +43,8 @@
   "pareto": [
     {
       "policy": "MultiJudge \u03c4=0.08",
+      "task_success_rate": 0.36,
+      "cost_per_successful_task": 0.254409,
       "accuracy": 0.3683,
       "accuracy_std": 0.3078,
       "cost_usd_total": 18.317441,
@@ -49,6 +57,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.08",
+      "task_success_rate": 0.4,
+      "cost_per_successful_task": 0.241085,
       "accuracy": 0.4163,
       "accuracy_std": 0.2998,
       "cost_usd_total": 19.286768,
@@ -61,6 +71,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.08",
+      "task_success_rate": 0.485,
+      "cost_per_successful_task": 0.212221,
       "accuracy": 0.4726,
       "accuracy_std": 0.2905,
       "cost_usd_total": 20.585424,
@@ -73,6 +85,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.12",
+      "task_success_rate": 0.305,
+      "cost_per_successful_task": 0.275377,
       "accuracy": 0.3209,
       "accuracy_std": 0.3009,
       "cost_usd_total": 16.798013,
@@ -85,6 +99,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.12",
+      "task_success_rate": 0.375,
+      "cost_per_successful_task": 0.244662,
       "accuracy": 0.3913,
       "accuracy_std": 0.2957,
       "cost_usd_total": 18.349618,
@@ -97,6 +113,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.12",
+      "task_success_rate": 0.45,
+      "cost_per_successful_task": 0.218587,
       "accuracy": 0.4456,
       "accuracy_std": 0.2911,
       "cost_usd_total": 19.672845,
@@ -109,6 +127,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.16",
+      "task_success_rate": 0.28,
+      "cost_per_successful_task": 0.273935,
       "accuracy": 0.2967,
       "accuracy_std": 0.3074,
       "cost_usd_total": 15.340386,
@@ -121,6 +141,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.16",
+      "task_success_rate": 0.36,
+      "cost_per_successful_task": 0.241521,
       "accuracy": 0.3757,
       "accuracy_std": 0.2999,
       "cost_usd_total": 17.389547,
@@ -133,6 +155,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.16",
+      "task_success_rate": 0.43,
+      "cost_per_successful_task": 0.217659,
       "accuracy": 0.4283,
       "accuracy_std": 0.2987,
       "cost_usd_total": 18.718692,
@@ -145,6 +169,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.20",
+      "task_success_rate": 0.265,
+      "cost_per_successful_task": 0.267681,
       "accuracy": 0.2886,
       "accuracy_std": 0.3052,
       "cost_usd_total": 14.187113,
@@ -157,6 +183,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.20",
+      "task_success_rate": 0.34,
+      "cost_per_successful_task": 0.239678,
       "accuracy": 0.3636,
       "accuracy_std": 0.301,
       "cost_usd_total": 16.298074,
@@ -169,6 +197,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.20",
+      "task_success_rate": 0.415,
+      "cost_per_successful_task": 0.212376,
       "accuracy": 0.4145,
       "accuracy_std": 0.3018,
       "cost_usd_total": 17.627218,
@@ -181,6 +211,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.24",
+      "task_success_rate": 0.25,
+      "cost_per_successful_task": 0.228291,
       "accuracy": 0.2794,
       "accuracy_std": 0.3039,
       "cost_usd_total": 11.414562,
@@ -193,6 +225,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.24",
+      "task_success_rate": 0.32,
+      "cost_per_successful_task": 0.211336,
       "accuracy": 0.3503,
       "accuracy_std": 0.3028,
       "cost_usd_total": 13.525523,
@@ -205,6 +239,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.24",
+      "task_success_rate": 0.39,
+      "cost_per_successful_task": 0.190444,
       "accuracy": 0.3998,
       "accuracy_std": 0.3053,
       "cost_usd_total": 14.854668,
@@ -217,6 +253,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.29",
+      "task_success_rate": 0.245,
+      "cost_per_successful_task": 0.216143,
       "accuracy": 0.275,
       "accuracy_std": 0.3032,
       "cost_usd_total": 10.591026,
@@ -229,6 +267,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.29",
+      "task_success_rate": 0.315,
+      "cost_per_successful_task": 0.201619,
       "accuracy": 0.3441,
       "accuracy_std": 0.3034,
       "cost_usd_total": 12.701987,
@@ -241,6 +281,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.29",
+      "task_success_rate": 0.385,
+      "cost_per_successful_task": 0.182222,
       "accuracy": 0.3927,
       "accuracy_std": 0.3073,
       "cost_usd_total": 14.031132,
@@ -253,6 +295,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.33",
+      "task_success_rate": 0.235,
+      "cost_per_successful_task": 0.21674,
       "accuracy": 0.2712,
       "accuracy_std": 0.3011,
       "cost_usd_total": 10.186787,
@@ -265,6 +309,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.33",
+      "task_success_rate": 0.31,
+      "cost_per_successful_task": 0.198351,
       "accuracy": 0.3394,
       "accuracy_std": 0.302,
       "cost_usd_total": 12.297748,
@@ -277,6 +323,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.33",
+      "task_success_rate": 0.38,
+      "cost_per_successful_task": 0.179301,
       "accuracy": 0.3877,
       "accuracy_std": 0.3065,
       "cost_usd_total": 13.626893,
@@ -289,6 +337,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.37",
+      "task_success_rate": 0.23,
+      "cost_per_successful_task": 0.210968,
       "accuracy": 0.2692,
       "accuracy_std": 0.3014,
       "cost_usd_total": 9.704518,
@@ -301,6 +351,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.37",
+      "task_success_rate": 0.31,
+      "cost_per_successful_task": 0.190572,
       "accuracy": 0.3361,
       "accuracy_std": 0.3029,
       "cost_usd_total": 11.81548,
@@ -313,6 +365,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.37",
+      "task_success_rate": 0.38,
+      "cost_per_successful_task": 0.172956,
       "accuracy": 0.3841,
       "accuracy_std": 0.3079,
       "cost_usd_total": 13.144624,
@@ -325,6 +379,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.41",
+      "task_success_rate": 0.23,
+      "cost_per_successful_task": 0.20183,
       "accuracy": 0.267,
       "accuracy_std": 0.3013,
       "cost_usd_total": 9.284199,
@@ -337,6 +393,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.41",
+      "task_success_rate": 0.31,
+      "cost_per_successful_task": 0.183793,
       "accuracy": 0.3337,
       "accuracy_std": 0.3031,
       "cost_usd_total": 11.39516,
@@ -349,6 +407,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.41",
+      "task_success_rate": 0.38,
+      "cost_per_successful_task": 0.167425,
       "accuracy": 0.3814,
       "accuracy_std": 0.3085,
       "cost_usd_total": 12.724305,
@@ -361,6 +421,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.45",
+      "task_success_rate": 0.23,
+      "cost_per_successful_task": 0.196617,
       "accuracy": 0.2663,
       "accuracy_std": 0.3015,
       "cost_usd_total": 9.044398,
@@ -373,6 +435,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.45",
+      "task_success_rate": 0.31,
+      "cost_per_successful_task": 0.179925,
       "accuracy": 0.3324,
       "accuracy_std": 0.304,
       "cost_usd_total": 11.155359,
@@ -385,6 +449,8 @@
     },
     {
       "policy": "MultiJudge \u03c4=0.45",
+      "task_success_rate": 0.375,
+      "cost_per_successful_task": 0.16646,
       "accuracy": 0.3797,
       "accuracy_std": 0.3093,
       "cost_usd_total": 12.484504,
@@ -398,6 +464,8 @@
   ],
   "versa_baseline": {
     "policy": "PRM-Guided (h=0.86/l=0.62)",
+    "task_success_rate": 0.32,
+    "cost_per_successful_task": 0.201977,
     "accuracy": 0.3468,
     "accuracy_std": 0.3035,
     "cost_usd_total": 12.926533,

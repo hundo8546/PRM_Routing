@@ -22,8 +22,10 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Any
 
 from data_loader import Trajectory, StepRecord
-from cost_model import TIERS, step_cost_usd, step_cost_normalised
+from cost_model import TIERS
 from routing_policies import RoutingPolicy
+
+SUCCESS_THRESHOLD = 0.5   # expected_task_accuracy >= this → task counted as successful
 
 
 # ---------------------------------------------------------------------------
@@ -75,6 +77,9 @@ class PolicyResult:
     escalation_rate: float          # fraction of steps routed to T3
     avg_tier: float
     routing_stability: float        # 1 - (tier changes / total steps)
+    # Primary outcome metrics
+    task_success_rate: float = 0.0          # fraction of trajs with expected_acc >= SUCCESS_THRESHOLD
+    cost_per_successful_task: float = 0.0   # mean_cost_usd_per_traj / task_success_rate
     # Per-dataset breakdown
     per_dataset: Dict[str, Dict[str, float]] = field(default_factory=dict)
     # Raw trajectory results (for Pareto plotting)
@@ -83,6 +88,8 @@ class PolicyResult:
     def summary(self) -> Dict[str, Any]:
         return {
             "policy": self.policy_name,
+            "task_success_rate": round(self.task_success_rate, 4),
+            "cost_per_successful_task": round(self.cost_per_successful_task, 6),
             "accuracy": round(self.mean_accuracy, 4),
             "accuracy_std": round(self.std_accuracy, 4),
             "cost_usd_total": round(self.total_cost_usd, 6),
@@ -98,22 +105,32 @@ class PolicyResult:
 # Core simulator
 # ---------------------------------------------------------------------------
 
-def _p_step_success(tier_id: int, human_label: int) -> float:
+def _p_step_success(tier_id: int, human_label: int, tiers: dict) -> float:
     """Expected probability that a step succeeds under this tier."""
-    t = TIERS[tier_id]
+    t = tiers[tier_id]
     return t.p_good_step_success if human_label == 1 else t.p_bad_step_recovery
 
 
-def simulate_trajectory(traj: Trajectory, policy: RoutingPolicy) -> TrajectoryResult:
+def simulate_trajectory(
+    traj: Trajectory,
+    policy: RoutingPolicy,
+    tiers: dict = None,
+) -> TrajectoryResult:
     """Apply routing policy to a single trajectory and compute results."""
+    if tiers is None:
+        tiers = TIERS
+    base_cost = tiers[1].input_cost_per_1m  # for relative cost normalisation
+
     step_results = []
     tiers_used = []
 
     for i, step in enumerate(traj.steps):
         tier_id = policy.decide(traj, i)
-        p_success = _p_step_success(tier_id, step.human_label)
-        cost_usd = step_cost_usd(tier_id, step.input_tokens, step.output_tokens)
-        cost_norm = step_cost_normalised(tier_id, step.input_tokens, step.output_tokens)
+        p_success = _p_step_success(tier_id, step.human_label, tiers)
+        t = tiers[tier_id]
+        cost_usd = (step.input_tokens * t.input_cost_per_1m +
+                    step.output_tokens * t.output_cost_per_1m) / 1_000_000
+        cost_norm = (step.input_tokens + step.output_tokens) * (t.input_cost_per_1m / base_cost)
 
         step_results.append(StepResult(
             traj_idx=traj.traj_idx,
@@ -163,6 +180,7 @@ def evaluate_policy(
     policy: RoutingPolicy,
     trajectories: List[Trajectory],
     train_trajectories: List[Trajectory] = None,
+    tiers: dict = None,
 ) -> PolicyResult:
     """
     Run a policy over all trajectories and aggregate metrics.
@@ -171,11 +189,14 @@ def evaluate_policy(
         policy: Routing policy to evaluate.
         trajectories: Test trajectories.
         train_trajectories: If provided, fit learned policies first.
+        tiers: Tier definitions to use (defaults to cost_model.TIERS).
     """
+    if tiers is None:
+        tiers = TIERS
     if train_trajectories is not None:
         policy.fit(train_trajectories)
 
-    traj_results = [simulate_trajectory(t, policy) for t in trajectories]
+    traj_results = [simulate_trajectory(t, policy, tiers=tiers) for t in trajectories]
 
     accs = np.array([r.expected_task_accuracy for r in traj_results])
     costs_usd = np.array([r.total_cost_usd for r in traj_results])
@@ -183,8 +204,8 @@ def evaluate_policy(
 
     all_step_results = [s for r in traj_results for s in r.step_results]
     n_steps = len(all_step_results)
-    tiers = [s.tier_selected for s in all_step_results]
-    n_escalations = sum(1 for t in tiers if t == 3)
+    tier_list = [s.tier_selected for s in all_step_results]
+    n_escalations = sum(1 for t in tier_list if t == 3)
     total_routing_changes = sum(r.routing_changes for r in traj_results)
     total_step_transitions = sum(max(0, len(r.step_results) - 1) for r in traj_results)
 
@@ -203,18 +224,25 @@ def evaluate_policy(
         for ds in ds_accs
     }
 
+    n_successful = sum(1 for r in traj_results if r.expected_task_accuracy >= SUCCESS_THRESHOLD)
+    task_success_rate = n_successful / len(traj_results) if traj_results else 0.0
+    mean_cost_usd = float(costs_usd.mean())
+    cost_per_success = mean_cost_usd / task_success_rate if task_success_rate > 0 else float("inf")
+
     return PolicyResult(
         policy_name=policy.name,
         mean_accuracy=float(accs.mean()),
         std_accuracy=float(accs.std()),
         total_cost_usd=float(costs_usd.sum()),
-        mean_cost_usd_per_traj=float(costs_usd.mean()),
+        mean_cost_usd_per_traj=mean_cost_usd,
         total_cost_norm=float(costs_norm.sum()),
         mean_cost_norm_per_traj=float(costs_norm.mean()),
         escalation_rate=n_escalations / n_steps if n_steps else 0.0,
-        avg_tier=sum(tiers) / len(tiers) if tiers else 0.0,
+        avg_tier=sum(tier_list) / len(tier_list) if tier_list else 0.0,
         routing_stability=1.0 - (total_routing_changes / total_step_transitions)
             if total_step_transitions > 0 else 1.0,
+        task_success_rate=task_success_rate,
+        cost_per_successful_task=cost_per_success,
         per_dataset=per_dataset,
         traj_results=traj_results,
     )

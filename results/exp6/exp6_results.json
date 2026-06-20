@@ -2,6 +2,8 @@
   "fixed": {
     "Dis(VQ) \u03c4=0.40": {
       "policy": "Dis(VQ) \u03c4=0.40",
+      "task_success_rate": 0.615,
+      "cost_per_successful_task": 0.177179,
       "accuracy": 0.5726,
       "accuracy_std": 0.281,
       "cost_usd_total": 21.793019,
@@ -13,6 +15,8 @@
     },
     "Dis(VQ) \u03c4=0.55": {
       "policy": "Dis(VQ) \u03c4=0.55",
+      "task_success_rate": 0.54,
+      "cost_per_successful_task": 0.174532,
       "accuracy": 0.5253,
       "accuracy_std": 0.3028,
       "cost_usd_total": 18.84946,
@@ -24,6 +28,8 @@
     },
     "Dis(VQ) \u03c4=0.65": {
       "policy": "Dis(VQ) \u03c4=0.65",
+      "task_success_rate": 0.465,
+      "cost_per_successful_task": 0.17712,
       "accuracy": 0.4745,
       "accuracy_std": 0.3108,
       "cost_usd_total": 16.472145,
@@ -36,6 +42,8 @@
   },
   "versa_baseline": {
     "policy": "PRM-Guided (h=0.86/l=0.62)",
+    "task_success_rate": 0.32,
+    "cost_per_successful_task": 0.201977,
     "accuracy": 0.3468,
     "accuracy_std": 0.3035,
     "cost_usd_total": 12.926533,

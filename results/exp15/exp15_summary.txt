@@ -1,0 +1,8 @@
+Experiment 15: Retrieval-Aware PRM + UA-3 [REAL mode]
+
+Configuration                      TSR  ΔvFixed     Acc     CostN   Prec  EscRate
+---------------------------------------------------------------------------------
+Fixed PRM-Guided                0.3200  +0.0000  0.3468    323163  0.541    0.147
+UA-3 only                       0.3850  +0.0650  0.3822    343973  0.540    0.150
+Retr-Aware PRM                  0.4500  +0.1300  0.4364    456814  0.562    0.396
+Retr-Aware + UA-3               0.4500  +0.1300  0.4402    463875  0.563    0.404

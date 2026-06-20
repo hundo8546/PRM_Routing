@@ -9,15 +9,21 @@
     "n_steps_with_retrieval": 1040
   },
   "signal_quality": {
-    "baseline_spearman": 0.2892,
-    "baseline_prec": 0.4341,
-    "query_comp_spearman": 0.0818,
-    "query_comp_prec": 0.55,
-    "retr_full_spearman": 0.3068,
-    "retr_comp_spearman": 0.2669,
-    "retr_comp_prec": 0.4118
+    "baseline_spearman": 0.1957,
+    "baseline_prec": 0.4224,
+    "query_comp_spearman": 0.2346,
+    "query_comp_prec": 0.4056,
+    "retr_full_spearman": 0.2811,
+    "retr_comp_spearman": 0.2413,
+    "retr_comp_prec": 0.384
+  },
+  "routing_tsr": {
+    "baseline": 0.32,
+    "B. Exp9 (q_comp+step)": 0.39,
+    "C. Exp10a (q+retr_full+step)": 0.45,
+    "D. Exp10b (q+retr_comp+step)": 0.41
   },
   "exp9_criterion_met": false,
   "exp10_criterion_met": false,
-  "n_scored": 400
+  "n_scored": 1918
 }
