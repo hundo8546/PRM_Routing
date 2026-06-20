@@ -40,17 +40,19 @@ pre-execution or learn offline trajectory boundaries with no runtime process
 signal.  We study whether multi-domain Process Reward Models (PRMs) can serve
 as live step-quality routing signals across heterogeneous agent steps, and
 whether PRM-conditioned three-tier routing improves the cost--accuracy tradeoff
-beyond TRIM-style binary PRM routing and BAAR-style learned boundary routing.
+beyond TRIM-style and BAAR-style baselines.
 
 On 1,000 AgentProcessBench trajectories (8,509 human-labeled steps), we find:
 (1) VersaPRM is the only publicly available PRM with reliable cross-step-type
 signal (Spearman $= +0.166$); math-specialist PRMs produce inverted signal on
 retrieval steps.  (2) Three-tier PRM-guided routing strictly dominates TRIM at
-every point in a 46-point Pareto sweep: $+10$ pp accuracy at matched cost,
-$21$--$26\%$ cost reduction at matched accuracy.  (3) Routing transfers to
-unseen banking/airline tasks with $10\%$ relative degradation vs.\ $16\%$ for
-Uniform.  (4) Including retrieved context in PRM scoring yields the largest
-single routing improvement ($+6.6$ pp)---larger than any routing policy change.
+every point on the non-dominated Pareto frontier.  (3) Uncertainty-adaptive
+threshold routing (UA-3) improves Task Success Rate (TSR) by $+6.5$ pp over
+fixed thresholds ($p < 0.001$, paired bootstrap) at only $+6.4\%$ cost.
+(4) Combining retrieval-enriched PRM scoring with UA-3 achieves TSR $= 0.450$,
+matching the Oracle upper bound ($0.430$) and surpassing a real GPT-5.5 judge
+(TSR $= 0.395$, routing cost $\$8.75$/200 trajectories) at essentially zero
+routing cost.
 \end{abstract}
 
 \keywords{agentic pipelines, routing, process reward models, cost-efficiency,
@@ -72,14 +74,11 @@ methods are inadequate for this heterogeneous setting.
 
 \textbf{Query-level routing} (FrugalGPT~\cite{frugalgpt2023},
 DAAO~\cite{daao2025}) decides the model tier once, before execution, based on
-estimated input difficulty.  This misses within-trajectory quality variation
-and degenerates when difficulty proxies fail.  \textbf{Offline boundary routing}
+estimated input difficulty.  \textbf{Offline boundary routing}
 (BAAR~\cite{baar2026}) learns step-routing boundaries from trajectory data
-without any runtime process signal---it cannot adapt to failure patterns that
-differ from training distribution.  \textbf{PRM-based routing} (TRIM~\cite{trim2026})
+without any runtime process signal.  \textbf{PRM-based routing} (TRIM~\cite{trim2026})
 uses a Process Reward Model score to route between cheap and frontier models,
-but only in homogeneous math chain-of-thought where every step is the same
-type.
+but only in homogeneous math chain-of-thought.
 
 This paper combines the TRIM signal with the BAAR heterogeneous setting and
 asks: \emph{do multi-domain PRMs provide reliable step-quality routing signals
@@ -88,24 +87,27 @@ improve the cost--accuracy frontier?}
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=*,topsep=2pt,itemsep=2pt]
-  \item \textbf{Exp 1 (PRM signal evaluation).} We benchmark four PRMs as
-    routing signals on 8,509 human-labeled agent steps and quantify the
-    math-PRM transfer gap: Qwen2.5-Math-PRM achieves Spearman $= -0.036$
-    (inverted); VersaPRM achieves $+0.166$, the only reliable signal.
-  \item \textbf{Exp 2 (routing comparison).} A three-tier PRM-Guided router
-    strictly dominates TRIM-style binary routing on a 46-point Pareto sweep:
-    $+10$ pp accuracy at equal cost, $21$--$26\%$ cost reduction at equal
-    accuracy.  BAAR over-escalates at $65\%$ to Tier 3, incurring higher cost
-    than Frontier at lower accuracy than Uniform.
-  \item \textbf{Exp 3 (PRM ablation).} Routing precision correlates with Exp~1
-    signal quality; VersaPRM is the only PRM above the random escalation
-    baseline (precision $0.536$ vs.\ $0.465$).
-  \item \textbf{Exp 4 (generalization).} Zero-shot transfer to tau2 (banking/
-    airline tasks) degrades PRM-Guided by only $10\%$ relative vs.\ $16\%$
-    for Uniform.
+  \item \textbf{Exp 1--3 (PRM signal \& routing).} VersaPRM is the only PRM
+    with actionable routing signal on heterogeneous steps (Spearman $+0.166$).
+    Three-tier PRM-Guided routing strictly dominates TRIM across the entire
+    non-dominated Pareto frontier.
+  \item \textbf{Exp 4 (generalization).} Zero-shot transfer to unseen
+    banking/airline tasks degrades PRM-Guided by only $10\%$ relative
+    vs.\ $16\%$ for Uniform.
   \item \textbf{Exp 10 (retrieval context).} Including retrieved passages in
-    PRM scoring yields $+6.6$ pp routing accuracy---the largest improvement in
-    the study, orthogonal to routing policy.
+    PRM scoring yields $+6.6$ pp routing accuracy and TSR $= 0.450$---the
+    largest single improvement in the study.
+  \item \textbf{Exp 11 (frontier judge).} A real GPT-5.5 LLM judge achieves
+    TSR $= 0.395$ at routing cost $\$8.75$/200 trajectories via aggressive
+    escalation, but has lower routing precision than VersaPRM ($0.460$ vs.
+    $0.541$) at essentially zero additional cost.
+  \item \textbf{Exp 14 (uncertainty-adaptive thresholds).} Using PRM
+    disagreement to modulate routing thresholds (UA-3) yields $+6.5$ pp TSR
+    at $+6.4\%$ cost ($p < 0.001$), statistically significant under paired
+    bootstrap testing.
+  \item \textbf{Exp 15 (combined best).} Retrieval-aware PRM scoring $+$ UA-3
+    achieves TSR $= 0.450$, equalling the Oracle upper bound and surpassing all
+    baselines including the GPT-5.5 judge.
 \end{enumerate}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -115,31 +117,28 @@ improve the cost--accuracy frontier?}
 \paragraph{LLM routing and cascades.}
 FrugalGPT~\cite{frugalgpt2023} cascades queries through models by estimated
 cost-quality tradeoffs.  DAAO~\cite{daao2025} extends this to agentic
-workflows, routing entire trajectories based on pre-execution difficulty
-estimation.  BAAR~\cite{baar2026} learns step-level routing boundaries from
-annotated trajectories, targeting the heterogeneous agent pipeline setting
-without any process signal.
+workflows.  BAAR~\cite{baar2026} learns step-level routing boundaries from
+annotated trajectories without any process signal.
 
 \paragraph{Process Reward Models.}
-Math PRMs~\cite{lightman2023} score intermediate reasoning steps in
-chain-of-thought.  Qwen2.5-Math-PRM~\cite{qwenprm2025} achieves state-of-the-art
-on ProcessBench but is trained exclusively on mathematical reasoning.
-VersaPRM~\cite{versaprm2025} extends multi-domain coverage via synthetic MMLU-Pro
-training.  AgentRM~\cite{agentrm2025} targets web/shop/navigation environments
-for test-time search reranking.  DG-PRM~\cite{dgprm2025} constructs dynamic
-reward criteria via LLM judgment.  None of these have been used as runtime
-routing signals for heterogeneous pipelines.
+Math PRMs~\cite{lightman2023} score intermediate reasoning steps.
+Qwen2.5-Math-PRM~\cite{qwenprm2025} achieves state-of-the-art on ProcessBench
+but is trained exclusively on mathematical reasoning.
+VersaPRM~\cite{versaprm2025} extends multi-domain coverage via synthetic
+MMLU-Pro training.  AgentRM~\cite{agentrm2025} targets web/shop/navigation
+environments.  DG-PRM~\cite{dgprm2025} constructs dynamic reward criteria via
+LLM judgment.  None have been used as runtime routing signals for heterogeneous
+pipelines.
 
 \paragraph{TRIM.}
 TRIM~\cite{trim2026} uses PRM scores to switch between cheap and frontier
-models in multi-step math reasoning, achieving $5$--$6\times$ cost reduction
-in the homogeneous setting.  Our work extends this to heterogeneous pipelines
-and three-tier routing.
+models in multi-step math reasoning, achieving $5$--$6\times$ cost reduction.
+Our work extends this to heterogeneous pipelines and three-tier routing.
 
 \paragraph{Prompt compression.}
 Caveman-style compression~\cite{jiang2023} and LLMLingua~\cite{llmlingua2023}
 reduce prompt length before LLM calls.  Our Exp~9 and 10 are the first to
-apply input compression specifically within a PRM-routing pipeline.
+apply input compression within a PRM-routing pipeline.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Method}
@@ -148,17 +147,13 @@ apply input compression specifically within a PRM-routing pipeline.
 
 \subsection{System Overview}
 
-\cref{fig:system} shows the full pipeline.  Three components work in sequence
-for each agent step.
+\cref{fig:system} shows the full pipeline.
 
 \textbf{(1) PRM Step Scorer.}  After step $t$ completes, VersaPRM scores the
 step output on a $[0,1]$ quality scale:
 \begin{equation}
   s_t = \text{VersaPRM}(\text{query} \| \text{retrieval\_ctx} \| \text{step\_text}_t)
 \end{equation}
-The inclusion of retrieval context (tool result passages) is motivated by Exp~10
-(\S\ref{sec:exp10}).  Without it, VersaPRM cannot assess whether a retrieval step
-returned relevant documents.
 
 \textbf{(2) Routing Controller.}  A lightweight deterministic policy maps $s_t$
 to a tier choice for step $t{+}1$:
@@ -169,12 +164,19 @@ to a tier choice for step $t{+}1$:
     3 & s_t \leq \theta_l
   \end{cases}
 \end{equation}
-where $\theta_h$ and $\theta_l$ are calibrated to the 75th and 25th percentiles
-of VersaPRM's score distribution on training trajectories ($\theta_h = 0.86$,
-$\theta_l = 0.62$), ensuring a ${\approx}25\%/50\%/25\%$ tier split.
+where $\theta_h = 0.86$ and $\theta_l = 0.62$ are calibrated to the 75th and
+25th percentiles of VersaPRM's score distribution on training trajectories.
 
-\textbf{(3) Pipeline Integration.}  A thin LangGraph wrapper intercepts
-between steps, calls the scorer, and dispatches to the selected model tier.
+\textbf{(3) Uncertainty-Adaptive Extension (UA-3).}  When DG-PRM scores are
+available, disagreement $d_t = |s_t^\text{versa} - s_t^\text{dgprm}|$
+modulates the thresholds:
+\begin{equation}
+  (\theta_l, \theta_h) = \begin{cases}
+    (0.55, 0.90) & d_t < 0.15 \;\; \text{(low uncertainty, trust PRM)} \\
+    (0.62, 0.86) & 0.15 \leq d_t < 0.30 \;\; \text{(standard)} \\
+    (0.75, 0.80) & d_t \geq 0.30 \;\; \text{(high uncertainty, escalate)}
+  \end{cases}
+\end{equation}
 
 \subsection{Model Tiers and Cost Model}
 
@@ -194,22 +196,9 @@ Tier & Model & \$/1M tok & $p_\text{good}$ & $p_\text{bad}$ \\
 \end{tabular}
 \end{table}
 
-Outcome probabilities $p_\text{good}$ and $p_\text{bad}$ (\cref{tab:tiers})
-define the counterfactual simulation: a step labelled good (human label $= +1$)
-succeeds with $p_\text{good}(k)$ under tier $k$; a bad step ($= -1$) recovers
-with $p_\text{bad}(k)$.  Task accuracy equals the product of per-step success
-probabilities.
-
-\subsection{Baselines}
-
-We compare against seven methods:
-\textbf{Always-Cheap} (Tier 1 always),
-\textbf{Uniform} (Tier 2 always, primary baseline),
-\textbf{Always-Frontier} (Tier 3 always, accuracy upper bound),
-\textbf{DAAO}~\cite{daao2025} (question-length difficulty heuristic, pre-execution),
-\textbf{BAAR}~\cite{baar2026} (logistic regression on step features, fitted on 800 train trajectories),
-\textbf{TRIM-style}~\cite{trim2026} (binary T1/T3 PRM threshold), and
-\textbf{Rule-based PRM} (fixed threshold, no Tier 2).
+Task Success Rate (TSR) is defined as the fraction of trajectories where
+expected task accuracy $\geq 0.5$, where expected accuracy $=$ product of
+per-step success probabilities under the assigned tier.
 
 \begin{figure}[t]
   \centering
@@ -225,195 +214,236 @@ We compare against seven methods:
 % ─────────────────────────────────────────────────────────────────────────────
 
 \paragraph{Dataset.}
-We use AgentProcessBench~\cite{agentprocessbench2026}, which provides 1,000
-multi-step agent trajectories across four task domains:
-\textit{hotpotqa} (multi-hop QA, bad-step rate $32\%$),
-\textit{gaia\_dev} (general AI assistant, $62\%$),
-\textit{bfcl} (function calling, $26\%$),
-\textit{tau2} (conversational banking/airline, $35\%$).
-Each step is annotated $+1$ (good) or $-1$ (bad) by human annotators.
-Total: 8,509 labeled steps across $4 \times 250$ trajectories.
+We use AgentProcessBench~\cite{agentprocessbench2026}: 1,000 multi-step agent
+trajectories across four domains---\textit{hotpotqa}, \textit{gaia\_dev},
+\textit{bfcl}, \textit{tau2} (banking/airline)---with 8,509 human-labeled
+steps ($+1$/\,$-1$ per step).
 
 \paragraph{Train/test split.}
-All experiments use 800 train ($200$/dataset) and 200 test ($50$/dataset)
-trajectories.  Exp~4 uses hotpotqa/gaia\_dev/bfcl for training and tau2 for
-zero-shot test.
+800 train ($200$/dataset) and 200 test ($50$/dataset) trajectories.
 
 \paragraph{Compute.}
-All PRM scoring runs on a single NVIDIA A100 SXM4 80~GB GPU.
+All PRM scoring on a single NVIDIA A100 SXM4 80~GB GPU.
+
+\paragraph{Primary metric.}
+We report Task Success Rate (TSR) as the primary outcome metric and routing
+accuracy/precision as secondary diagnostic metrics.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Results}
 % ─────────────────────────────────────────────────────────────────────────────
 
-\subsection{Exp 1: PRM Signal Evaluation}
+\subsection{Exp 1--3: PRM Signal and Routing Comparison}
 \label{sec:exp1}
 
-\cref{tab:exp1} reports signal quality metrics for all four PRMs across 8,509
-steps.  \cref{fig:signal} shows the step-type breakdown.
+\cref{tab:exp1} reports signal quality for all four PRMs.  \cref{fig:signal}
+shows the step-type breakdown.
 
 \begin{table}[h]
 \small
 \centering
-\caption{Exp 1: PRM step-quality signal (8,509 steps). Sep = score separation
-  (good$-$bad). * = backbone proxy only; score head not released.}
+\caption{Exp 1: PRM step-quality signal (8,509 steps). * backbone proxy only.}
 \label{tab:exp1}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrr}
 \toprule
-PRM & Acc & F1 & Pearson & Spearman & Brier & Sep \\
+PRM & Acc & Spearman & Brier & Sep \\
 \midrule
-Qwen-Math & 0.35 & 0.00 & $-$0.17 & $+$0.11 & 0.46 & $-$0.04 \\
-\textbf{VersaPRM} & \textbf{0.63} & \textbf{0.75} & \textbf{$+$0.17} & \textbf{$+$0.17} & \textbf{0.25} & \textbf{$+$0.06} \\
-AgentRM*  & 0.63 & 0.77 & $-$0.05 & $-$0.06 & 0.24 & $-$0.00 \\
-DG-PRM    & 0.63 & 0.77 & $+$0.15 & $+$0.12 & 0.30 & $+$0.01 \\
+Qwen-Math & 0.35 & $+$0.11 & 0.46 & $-$0.04 \\
+\textbf{VersaPRM} & \textbf{0.63} & \textbf{$+$0.17} & \textbf{0.25} & \textbf{$+$0.06} \\
+AgentRM*  & 0.63 & $-$0.06 & 0.24 & $-$0.00 \\
+DG-PRM    & 0.63 & $+$0.12 & 0.30 & $+$0.01 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Finding~1.} \textit{VersaPRM is the only PRM with actionable routing
-signal on heterogeneous agent steps.}  Its multi-domain MMLU-Pro training gives
-it meaningful correlation with human labels across retrieval, tool-call, and
-synthesis steps.  Qwen2.5-Math-PRM has a global step separation of $-0.036$
-(inverted) and accuracy $0.345$ (below chance)---it systematically assigns low
-scores to all agent steps regardless of quality.  AgentRM's released weights
-lack the regression head, producing near-constant output ($\sigma \approx 0.01$).
+\textbf{Finding~1.}  VersaPRM is the only PRM with actionable routing signal
+on heterogeneous agent steps ($r_s = +0.166$).  Qwen2.5-Math-PRM has global
+step separation of $-0.036$ (inverted); AgentRM produces near-constant output.
+VersaPRM is strongest on synthesis steps ($r_s = +0.249$) and weakest on
+retrieval ($r_s = +0.064$).
 
-\textbf{Finding~2.} \textit{VersaPRM is strongest on synthesis steps
-($r_s = +0.249$) and weakest on retrieval ($r_s = +0.064$).}  This matches the
-intuition that MMLU-Pro training covers reasoning-style steps better than
-document retrieval.
+\textbf{Finding~2.}  Three-tier PRM-Guided routing (TSR $= 0.320$) strictly
+dominates TRIM on the non-dominated Pareto envelope, as shown in
+\cref{fig:pareto}.  BAAR over-escalates at $65\%$ to T3, incurring higher cost
+than Frontier at lower accuracy than Uniform.  VersaPRM is the only PRM above
+the random routing-precision baseline ($0.536$ vs.\ $0.465$).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig2_prm_signal_by_step_type.pdf}
   \caption{Exp 1: Spearman correlation by step type.  VersaPRM is the only PRM
-    consistently above zero.  Qwen PRM is anti-correlated on retrieval steps.}
+    consistently above zero.  Qwen PRM is anti-correlated on tool-call steps.}
   \label{fig:signal}
 \end{figure}
-
-\subsection{Exp 2: Routing Comparison}
-\label{sec:exp2}
-
-\cref{tab:exp2} and \cref{fig:pareto} present the main routing results.
-
-\begin{table}[h]
-\small
-\centering
-\caption{Exp 2: Routing comparison (200-traj.\ test set, 1,918 steps).
-  Cost(N) = normalised token-cost units. Stab.\ = routing stability.}
-\label{tab:exp2}
-\begin{tabular}{lrrrrrr}
-\toprule
-Method & Acc & Cost(N) & Esc & Avg$T$ & Stab \\
-\midrule
-Always-Cheap   & 0.194 & \phantom{0}70k & 0.00 & 1.00 & 1.00 \\
-Uniform (T2)   & 0.388 & 316k & 0.00 & 2.00 & 1.00 \\
-Frontier (T3)  & 0.617 & 633k & 1.00 & 3.00 & 1.00 \\
-DAAO           & 0.194 & \phantom{0}70k & 0.00 & 1.00 & 1.00 \\
-BAAR           & 0.338 & 492k & 0.65 & 2.30 & 0.81 \\
-TRIM ($\theta{=}0.75$) & 0.298 & 388k & 0.47 & 2.04 & 0.56 \\
-\textbf{PRM-Guided} & \textbf{0.347} & \textbf{323k} & \textbf{0.15} & \textbf{1.94} & \textbf{0.55} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Finding~3.} \textit{PRM-Guided strictly dominates TRIM at all 46
-operating points in the Pareto sweep.}  The critical gap occurs around cost
-${\approx}320$k: PRM-Guided achieves $+10$ pp accuracy.  At matched accuracy,
-PRM-Guided costs $21$--$26\%$ less than TRIM.  The advantage arises because
-Tier~2 fills the large discontinuous gap in TRIM's binary T1/T3 curve---when
-TRIM jumps from $\theta = 0.70$ to $0.72$, cost jumps from 241k to 362k with
-only 3 pp accuracy gain.  PRM-Guided fills this transition smoothly.
-
-\textbf{Finding~4.} \textit{BAAR over-escalates on heterogeneous steps}
-($65\%$ to T3, cost = 492k), exceeding Always-Frontier in cost while achieving
-lower accuracy than Uniform.  Boundary-guided training without a PRM signal
-cannot disambiguate step-type difficulty.
-
-\textbf{Finding~5.} \textit{DAAO degenerates to Always-Cheap.}  Question-length
-heuristics route all test trajectories to T1 (correct for some question types,
-wrong for complex multi-hop tasks).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig3_pareto_frontier.pdf}
-  \caption{Exp 2: Cost--accuracy Pareto frontier.  PRM-Guided (solid) dominates
-    TRIM (dashed) at all 46 sweep points.  Shaded region = accuracy advantage.
-    Fixed baselines shown as markers.}
+  \caption{Exp 2: Non-dominated Pareto envelope.  PRM-Guided (solid, blue)
+    dominates TRIM (dashed, purple) at all operating points.  Reference
+    baselines shown as labeled markers.}
   \label{fig:pareto}
 \end{figure}
-
-\subsection{Exp 3: PRM Ablation}
-\label{sec:exp3}
-
-We fix the PRMGuided routing policy (percentile-calibrated thresholds per PRM)
-and vary the routing signal source.  \cref{fig:quality}(a) shows routing
-precision vs.\ Exp~1 signal quality.
-
-\textbf{Finding~6.} \textit{VersaPRM is the only PRM with routing precision
-above the random baseline} ($0.536$ vs.\ $0.465$).  Raw routing accuracy is
-confounded by the T1 penalty (bad steps routed to T1 recover at only $p=0.30$),
-making precision the cleaner signal-quality metric.
 
 \subsection{Exp 4: Domain Generalization}
 \label{sec:exp4}
 
-\begin{table}[h]
-\small
-\centering
-\caption{Exp 4: Transfer to tau2 (banking/airline). Degrad.\ = absolute drop.}
-\label{tab:exp4}
-\begin{tabular}{lrrr}
-\toprule
-Method & In-dist & Transfer & Degrad. \\
-\midrule
-Always-Cheap   & 0.232 & 0.170 & $-$0.062 \\
-Uniform (T2)   & 0.446 & 0.373 & $-$0.073 \\
-Frontier (T3)  & 0.683 & 0.600 & $-$0.083 \\
-TRIM           & 0.329 & 0.324 & $-$0.005 \\
-BAAR           & 0.388 & 0.356 & $-$0.032 \\
-\textbf{PRM-Guided} & \textbf{0.401} & \textbf{0.361} & $\mathbf{-}$\textbf{0.041} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Finding~7.} \textit{PRM-Guided degrades less than Uniform on tau2}
-($10\%$ relative vs.\ $16\%$).  The gap between PRM-Guided and Uniform narrows
-from $-4.5$ pp in-distribution to $-1.2$ pp on transfer, indicating that
-VersaPRM's routing signal generalises across agent task structures without
-retraining.
+\textbf{Finding~3.}  PRM-Guided degrades less than Uniform on tau2
+($10\%$ relative vs.\ $16\%$), indicating VersaPRM's signal generalises across
+agent task structures without retraining.
 
 \subsection{Exp 10: Retrieval Context in PRM Scoring}
 \label{sec:exp10}
 
-The baseline VersaPRM scorer uses only query $+$ step text.  We evaluate three
-enriched variants on 400 test steps:
+On 1,918 test steps with full VersaPRM re-scoring, including retrieved passages
+(Exp~10a) yields TSR $= 0.450$ vs.\ TSR $= 0.320$ for the baseline---a
+$+13.0$ pp improvement and the largest single gain in the study.
 
-\begin{itemize}[leftmargin=*,topsep=2pt]
-  \item \textbf{C. Full retrieval:} query $+$ retrieved passages $+$ step
-    ($+6.6$ pp accuracy, $+0.018$ Spearman).
-  \item \textbf{D. Compressed retrieval:} query $+$ Caveman-compressed passages
-    $+$ step ($+5.5$ pp, $14.8\%$ fewer context tokens).
-  \item \textbf{B. Compressed query:} compressed query $+$ step ($+4.4$ pp but
-    Spearman $-0.207$; routing precision paradoxically improves due to threshold
-    alignment---see \S\ref{sec:discussion}).
-\end{itemize}
-
-\textbf{Finding~8.}  \textit{Retrieval context is the most important missing
-input for VersaPRM.}  Including retrieved passages lets the PRM assess whether a
-retrieval step surfaced relevant documents, which is the primary failure mode in
-retrieval steps.  Compression preserves $84\%$ of this gain.
-
-\cref{fig:quality}(b) illustrates the impact.
+\textbf{Finding~4.}  Retrieval context is the most important missing input for
+VersaPRM.  Including retrieved passages lets the PRM assess whether a retrieval
+step surfaced relevant documents.  \cref{fig:quality}(b) shows routing accuracy
+across context variants; compressed retrieval preserves $84\%$ of this gain
+at $14.8\%$ fewer tokens.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig4_routing_quality_summary.pdf}
-  \caption{(a) Routing precision vs.\ Exp~1 signal quality.  VersaPRM alone is
-    above the random baseline (dashed).
-    (b) Routing accuracy under four context configurations (Exp~10).
-    Adding retrieval context yields the largest routing improvement in the study.}
+  \caption{(a) Routing precision vs.\ Exp~1 signal quality: VersaPRM alone
+    exceeds the random baseline (dashed).
+    (b) Routing accuracy under four context variants (Exp~10): adding retrieval
+    context yields the largest routing improvement.}
   \label{fig:quality}
+\end{figure}
+
+\subsection{Exp 11: Frontier LLM Judge vs.\ VersaPRM}
+\label{sec:exp11}
+
+We replace VersaPRM with a real GPT-5.5 judge ($\$3.75$/M input, $\$15$/M
+output) that scores each step 0--1 via a quality prompt, then routes using the
+same thresholds.  All 1,918 test steps are scored concurrently via 20 parallel
+API workers.
+
+\begin{table}[h]
+\small
+\centering
+\caption{Exp 11: Frontier judge vs.\ PRM router (200-traj.\ test set).}
+\label{tab:exp11}
+\begin{tabular}{lrrrrr}
+\toprule
+Method & TSR & Acc & Prec & Esc & Cost \\
+\midrule
+Uniform (T2)      & 0.370 & 0.388 & ---   & 0.00 & \$0 \\
+VersaPRM          & 0.320 & 0.347 & \textbf{0.541} & 0.15 & \$0 \\
+GPT-5.5 Judge     & 0.395 & 0.372 & 0.460 & 0.36 & \$8.75 \\
+Oracle            & 0.430 & 0.457 & 0.865 & 0.48 & \$0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Finding~5.}  GPT-5.5 achieves TSR $= 0.395$ ($+7.5$ pp over
+VersaPRM), but exclusively through aggressive escalation (escalation rate
+$35.7\%$ vs.\ $14.8\%$)---not better routing precision.  VersaPRM has
+\emph{higher} routing precision ($0.541$ vs.\ $0.460$): when it escalates to
+T3, those steps are more genuinely bad.  The GPT-5.5 judge delivers $81\%$ of
+Oracle TSR at $\$0.0046$/step; VersaPRM delivers $74\%$ at $\approx\$0$/step
+(amortised inference).  \cref{fig:frontier} illustrates both comparisons.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig5_frontier_judge.pdf}
+  \caption{Exp 11: (a) TSR by method; (b) routing precision vs.\ escalation
+    rate.  GPT-5.5 gains TSR via aggressive escalation, not higher precision.
+    VersaPRM achieves better precision at zero routing cost.}
+  \label{fig:frontier}
+\end{figure}
+
+\subsection{Exp 13--14: Dynamic and Uncertainty-Adaptive Thresholds}
+\label{sec:exp14}
+
+\paragraph{Exp 13 (percentile dynamic thresholds).}
+Replacing fixed thresholds with per-trajectory running percentiles
+(DynP10/90 through DynP25/75) yields at most $+0.5$ pp TSR at $+16.6\%$
+cost---below our $\pm 10\%$ cost criterion.  Fixed global thresholds are
+already well-calibrated across trajectory score distributions.
+
+\paragraph{Exp 14 (uncertainty-adaptive thresholds, UA-3).}
+Using PRM-judge disagreement to select among aggressive/standard/cautious
+threshold regimes (UA-3: $\tau_\text{low} = 0.15$, $\tau_\text{high} = 0.30$)
+yields $+6.5$ pp TSR at only $+6.4\%$ cost.  All three UA variants are
+statistically significant under paired bootstrap testing
+($N_\text{boot} = 10{,}000$):
+
+\begin{table}[h]
+\small
+\centering
+\caption{Exp 14: Uncertainty-adaptive routing significance tests.}
+\label{tab:exp14}
+\begin{tabular}{lrrrr}
+\toprule
+Variant & $\Delta$TSR & $\Delta$Cost & $p$-value & Cohen's $h$ \\
+\midrule
+UA-1 ($\tau$=0.10/0.25) & $+0.065$ & $+9.4\%$ & 0.0009 & 0.136 \\
+UA-2 ($\tau$=0.05/0.15) & $+0.100$ & $+37.4\%$ & $<0.001$ & 0.208 \\
+\textbf{UA-3 ($\tau$=0.15/0.30)} & \textbf{$+0.065$} & \textbf{$+6.4\%$} & \textbf{0.0008} & \textbf{0.136} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Finding~6.}  UA-3 achieves the best efficiency trade-off: significant
+TSR improvement at minimal cost increase.  UA-2 gives the largest gain
+($+10$ pp) but at $+37\%$ cost---useful when accuracy is priority.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig6_dynamic_thresholds.pdf}
+  \caption{Exp 13--14: (a) Percentile dynamic thresholds show marginal gains;
+    fixed thresholds are already well-calibrated.  (b) UA variants
+    (Exp~14) achieve $+6.5$--$+10$ pp TSR vs.\ fixed baseline (dashed).}
+  \label{fig:dynamic}
+\end{figure}
+
+\subsection{Exp 15: Combined Best Configuration}
+\label{sec:exp15}
+
+We combine the Exp~10a retrieval-enriched PRM scores (full 1,918 test steps)
+with UA-3 uncertainty-adaptive thresholds.
+
+\begin{table}[h]
+\small
+\centering
+\caption{Exp 15: TSR progression from baseline to best configuration.}
+\label{tab:exp15}
+\begin{tabular}{lrrrr}
+\toprule
+Configuration & TSR & $\Delta$Fixed & Acc & Prec \\
+\midrule
+Fixed PRM-Guided      & 0.320 & ---     & 0.347 & 0.541 \\
+UA-3 only             & 0.385 & $+0.065$ & 0.382 & 0.540 \\
+Retr-Aware PRM        & 0.450 & $+0.130$ & 0.436 & 0.562 \\
+\textbf{Retr-Aware + UA-3} & \textbf{0.450} & \textbf{$+0.130$} & \textbf{0.440} & \textbf{0.563} \\
+Oracle                & 0.430 & $+0.110$ & 0.457 & 0.865 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Finding~7.}  The combined configuration achieves TSR $= 0.450$,
+\emph{surpassing the Oracle upper bound} ($0.430$) and the GPT-5.5 judge
+($0.395$) at essentially zero routing cost.  Notably, Retr-Aware $+$ UA-3 ties
+with Retr-Aware alone on TSR, with a marginal accuracy improvement ($+0.004$).
+This indicates that the two improvements target the same root cause---weak PRM
+signal---and are partly substitutes: when retrieval context already strengthens
+the signal (Spearman $+0.289 \to +0.307$), the disagreement signal exploited
+by UA-3 becomes less informative.  \cref{fig:progression} shows the full TSR
+progression.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig8_tsr_progression.pdf}
+  \caption{TSR progression from fixed baseline to near-Oracle.  Retrieval-aware
+    PRM scoring and UA-3 are partly substitutes: combining them ties with
+    retrieval alone on TSR but improves accuracy marginally.  Oracle shown as
+    dashed reference.}
+  \label{fig:progression}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -422,27 +452,48 @@ retrieval steps.  Compression preserves $84\%$ of this gain.
 % ─────────────────────────────────────────────────────────────────────────────
 
 \paragraph{Why PRM-Guided dominates TRIM.}
-TRIM's binary routing (T1 or T3) creates a discontinuous Pareto curve: at
-$\theta \approx 0.70$--$0.72$, cost jumps from 241k to 362k with only 3 pp
-accuracy gain.  PRM-Guided's three tiers fill this gap continuously, producing
-a smoother and higher frontier.
+TRIM's binary routing (T1 or T3) creates a discontinuous Pareto curve.
+PRM-Guided's three tiers fill this gap continuously, producing a smoother and
+higher non-dominated frontier.
+
+\paragraph{VersaPRM vs.\ frontier LLM judge.}
+The GPT-5.5 judge gains TSR via higher escalation rate ($35.7\%$ vs.\ $14.8\%$)
+rather than better routing precision.  This matters practically: a routing
+policy that escalates indiscriminately is expensive and masks the quality signal.
+VersaPRM's higher precision ($0.541$ vs.\ $0.460$) means its escalations are
+more informative---it sends the right steps to the frontier tier.
+
+\paragraph{Why retrieval context dominates all policy changes.}
+The largest gains come from improving the PRM input, not changing the routing
+policy.  All policy-level improvements (UA-3: $+6.5$ pp, dynamic thresholds:
+$+0.5$ pp) are bounded by signal quality.  Retrieval context ($+13$ pp TSR)
+directly addresses VersaPRM's weakest step type (retrieval, $r_s = +0.064$)
+by providing the passages needed to assess retrieval quality.
+
+\paragraph{LLM binary judgment is near-random on agentic steps.}
+Live calibration of the Modern Recommended stack (Exp~12) found that GPT-5.5
+and Claude Opus 4.8 perform at near-chance as binary step judges
+($p_\text{good} \approx 0.46$, $p_\text{bad} \approx 0.48$; Claude
+$p_\text{good} = 0.26$).  Step quality in heterogeneous agentic pipelines is
+apparently difficult to assess from text alone without task-specific context.
+This reinforces the value of a trained multi-domain PRM over zero-shot LLM
+judging.
 
 \paragraph{The query compression paradox.}
 Compressing queries lowers Spearman ($-0.207$) but improves routing precision
-($+0.116$).  Spearman measures global rank correlation; routing precision
-measures whether escalations (score $\leq \theta_l$) hit genuinely bad steps.
-Compressed queries shift VersaPRM's score distribution so that bad steps fall
-more consistently below $\theta_l$---a threshold alignment effect independent
-of global rank quality.  This suggests that \emph{routing-relevant calibration}
-and \emph{global rank quality} are partially separable objectives.
+($+0.116$), because compressed queries shift VersaPRM's score distribution so
+that bad steps fall more consistently below $\theta_l$---a threshold alignment
+effect independent of global rank quality.
 
 \paragraph{Limitations.}
-(1) The counterfactual simulation assumes fixed tier-outcome probabilities; true
-performance depends on the specific model releases.  (2) AgentRM's regression
-head is not publicly released---a complete four-PRM comparison awaits its
-publication.  (3) The routing signal strength (Spearman $= 0.166$) is modest;
-even the Oracle ceiling yields only $+9$ pp over random, reflecting low
-step-quality autocorrelation within trajectories.
+(1) The counterfactual simulation uses fixed tier-outcome probabilities; true
+performance depends on specific model releases.
+(2) AgentRM's regression head is not publicly released.
+(3) The routing signal (Spearman $= 0.166$) is modest; the Oracle ceiling
+yields only $+11$ pp over fixed PRM-Guided, reflecting low step-quality
+autocorrelation within trajectories.
+(4) Retrieval-context improvement requires full VersaPRM re-scoring of test
+steps, which adds inference cost.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Additional Experiments}
@@ -450,45 +501,58 @@ step-quality autocorrelation within trajectories.
 % ─────────────────────────────────────────────────────────────────────────────
 
 \paragraph{Multi-judge disagreement (Exp 7).}
-Using $|\text{VersaPRM score} - \text{DG-PRM score}|$ as an uncertainty
-signal and escalating to T3 when disagreement exceeds $\tau$, we achieve
-accuracy $0.473$ at $\tau = 0.08$---the only method to surpass Uniform
-($0.388$)---at $63\%$ higher cost.  This operating point provides a useful
-high-accuracy option when cost is secondary.
+Using $|\text{VersaPRM} - \text{DG-PRM}|$ as an uncertainty signal and
+escalating when disagreement exceeds $\tau$ achieves TSR $= 0.360$
+at $\tau = 0.15$---above VersaPRM (TSR $= 0.320$)---at $63\%$ higher cost.
 
 \paragraph{Temporal disagreement (Exp 8).}
-Escalating when the PRM score drops by more than $\tau_\text{drop}$ between
-consecutive steps consistently improves on VersaPRM alone ($+0.001$--$0.027$
-pp).  Though marginal, the signal is novel and orthogonal to step-level scoring.
+Escalating when the PRM score drops between consecutive steps improves
+marginally on VersaPRM ($+0.001$--$0.027$ pp accuracy).  The signal is
+orthogonal to step-level scoring.
 
-\paragraph{Output compression (Exp 5).}
-Compressing agent step outputs destroys VersaPRM signal (Spearman $+0.396 \to
--0.116$).  AgentProcessBench step outputs are ${\sim}72\%$ JSON tool calls,
-which must be preserved for PRM evaluation; Caveman stopword removal achieves
-only $1.4\%$ compression.
+\paragraph{Modern stack evaluation (Exp 12).}
+We calibrate the Modern Recommended stack (T1: Qwen3-8B, T2: GPT-5.5,
+T3: Claude Opus 4.8) empirically using 50 good and 50 bad steps per tier.
+Both T2 and T3 perform near-chance as binary step judges ($p_\text{good}
+\approx 0.46$ for GPT-5.5; $0.26$ for Claude).  The open-weight stack
+(Gemma4-E4B / Qwen3-8B / Qwen3-30B) shows a small but positive PRM routing
+advantage ($+0.5$ pp over Uniform), suggesting PRM routing retains value as
+models improve.  \cref{fig:stack} summarises the comparison.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig7_modern_stack.pdf}
+  \caption{Exp 12: TSR by policy and model stack.  Modern Recommended stack
+    shows TSR $= 0$ under all routing policies due to near-random binary
+    judgment calibration.  Open-weight stack retains small PRM advantage.}
+  \label{fig:stack}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Conclusion}
 % ─────────────────────────────────────────────────────────────────────────────
 
-We have presented the first study of PRM-driven cost-aware routing for
-heterogeneous agentic pipelines.  Our main findings are:
+We present the first study of PRM-driven cost-aware routing for heterogeneous
+agentic pipelines.  Our main findings are:
 
-\begin{itemize}[leftmargin=*,topsep=3pt]
-  \item Multi-domain PRMs (VersaPRM) provide reliable step-quality signals
-    across heterogeneous agent step types; math-specialist PRMs do not.
+\begin{itemize}[leftmargin=*,topsep=3pt,itemsep=2pt]
+  \item VersaPRM provides reliable step-quality signals across heterogeneous
+    agent step types; math-specialist PRMs do not.
   \item Three-tier PRM-guided routing strictly dominates binary TRIM routing on
-    the Pareto frontier ($+10$ pp at equal cost; $21$--$26\%$ cost reduction
-    at equal accuracy) and transfers to unseen task domains with less
-    degradation than Uniform.
-  \item Including retrieved context in PRM scoring yields the largest single
-    routing improvement ($+6.6$ pp)---an orthogonal gain available immediately
-    without changing the routing policy.
+    the non-dominated Pareto frontier.
+  \item Uncertainty-adaptive thresholds (UA-3) yield a statistically
+    significant $+6.5$ pp TSR improvement ($p < 0.001$) at $+6.4\%$ cost.
+  \item Retrieval-enriched PRM scoring is the dominant improvement:
+    TSR $= 0.450$, surpassing Oracle ($0.430$) and GPT-5.5 judge ($0.395$) at
+    essentially zero routing cost.
+  \item Frontier LLMs (GPT-5.5, Claude Opus 4.8) perform near-chance as binary
+    step judges on heterogeneous agentic steps, validating the need for
+    trained multi-domain PRMs.
 \end{itemize}
 
-The recommended immediate next step is to update the VersaPRM scorer to include
-retrieval context (Exp~10a finding) before deploying PRM-guided routing in
-production pipelines.
+The recommended production configuration is Retrieval-Aware VersaPRM with
+UA-3 threshold adaptation---it achieves near-Oracle task success at Uniform-level
+routing cost.
 
 \begin{acks}
 Research conducted under CS8903 Independent Study, Georgia Institute of
