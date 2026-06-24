@@ -215,23 +215,26 @@ Caveman-style compression~\cite{jiang2023} and LLMLingua~\cite{llmlingua2023}
 LLMLingua are being conflated. LLMLingua is token-importance scoring via a small
 language model — a completely different technique from stopword removal.
 
-**10b. Neither method was actually used.**
+**10b. The original exp910 used a custom proxy, not the real implementations.**
 The `caveman_compress()` function in `experiments/exp910_compression/run_exp910.py`
 is a custom stopword-removal function written from scratch. It was NOT imported from:
-- The JuliusBrussee/caveman GitHub repo (a Claude Code skill with no Python API,
-  designed to compress model output responses, not arbitrary input text)
+- The JuliusBrussee/caveman GitHub repo (which compresses text by calling Claude API)
 - LLMLingua (a learned compression method requiring a separate small LM)
 
-The function name "caveman_compress" is borrowed from the branding concept only.
+**STATUS: Exp 16 implemented — pending cluster run.**
+`experiments/exp16_compression_compare/` now compares all four methods head-to-head:
+  - A. None (baseline passthrough)
+  - B. Stopword removal (exp910 custom, kept for continuity)
+  - C. Real caveman (JuliusBrussee/caveman — actual Claude Haiku API calls)
+  - D. LLMLingua (microsoft/llmlingua-2, local, deterministic)
 
-**Fix:**
-1. Remove the incorrect `\cite{jiang2023}` attribution for caveman-style compression
-2. Describe the compression approach accurately in the paper:
-   > "We apply a lightweight rule-based compression: stopwords and filler tokens are
-   > removed while numbers, proper nouns, and domain terms are preserved."
-3. Cite LLMLingua separately as related work only, not as the basis for our method
-4. If LLMLingua is actually needed as a stronger compression baseline, implement it:
-   `pip install llmlingua` and apply `PromptCompressor` to queries and retrieval passages
+**Remaining fixes after Exp 16 results are in:**
+1. Update exp910 to use whichever method wins on signal quality + token reduction
+2. Fix the paper citation:
+   - Remove `\cite{jiang2023}` from "Caveman-style compression"
+   - Replace with accurate description of whichever method is used
+   - Cite LLMLingua as separate related work only if we actually use it
+3. Update compression ratio numbers in the paper with real Exp 16 results
 
 ---
 
@@ -248,7 +251,7 @@ The function name "caveman_compress" is borrowed from the branding concept only.
 | 5   | TRIM uses wrong PRM             | TRIM Pareto curve                 | No — Qwen scores already on disk          | MEDIUM   |
 | 6   | Threshold leakage               | Thresholds in Exp 2+              | No — recompute from train set             | MEDIUM   |
 | 7   | Undisclosed baseline adaptations| Paper framing                     | No — writing change                       | MEDIUM   |
-| 10  | Wrong caveman citation          | Paper credibility                 | No — writing change                       | MEDIUM   |
+| 10  | Caveman/LLMLingua comparison    | Compression results in paper      | Exp 16 built — needs cluster run          | MEDIUM   |
 | 8   | BAAR docstring wrong            | Nothing                           | No                                        | LOW      |
 | 9   | Diagrams reflect proxies        | Paper figures                     | No — after #2 fixed                       | LOW      |
 
