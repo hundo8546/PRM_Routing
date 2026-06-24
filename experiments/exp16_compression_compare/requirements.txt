@@ -1,0 +1,7 @@
+anthropic>=0.40.0
+llmlingua>=0.2.0
+scipy
+numpy
+transformers
+peft
+torch
